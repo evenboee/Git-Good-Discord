@@ -1,4 +1,4 @@
-package gitlab
+package gitlab_structs
 
 // Webhook is a Webhook that can be registered with Gitlab Projects
 type Webhook struct {
