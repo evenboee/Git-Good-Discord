@@ -13,13 +13,13 @@ func GetFirestore() option.ClientOption {
 
 func GetDiscordToken() (DiscordDetails, error) {
 	var discordDetails DiscordDetails
-	err := fileToInterface("discord.json", discordDetails)
+	err := fileToInterface("discord.json", &discordDetails)
 	return discordDetails, err
 }
 
 func GetFirestoreDetails() (FirestoreDetails, error) {
 	var firestoreDetails FirestoreDetails
-	err := fileToInterface("firestore.json", firestoreDetails)
+	err := fileToInterface("firestore.json", &firestoreDetails)
 	return firestoreDetails, err
 }
 

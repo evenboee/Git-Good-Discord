@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	cloud.google.com/go v0.75.0 // indirect
+	github.com/bwmarrin/discordgo v0.23.2
 	golang.org/x/oauth2 v0.0.0-20210218202405-ba52d332ba99 // indirect
 	golang.org/x/sys v0.0.0-20210223095934-7937bea0104d // indirect
 	google.golang.org/api v0.40.0
