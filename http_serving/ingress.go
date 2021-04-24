@@ -1,7 +1,6 @@
 package http_serving
 
 import (
-	"log"
 	"net/http"
 	"strings"
 )
@@ -10,11 +9,11 @@ const port = "8080"
 
 var fs = http.FileServer(http.Dir("./static"))
 
-func StartWebHandler() {
+func StartWebHandler(errorChannel chan <- error) {
 	mux := http.NewServeMux()
 	mux.Handle("/", http.HandlerFunc(redirectionHandler))
 	err := http.ListenAndServe(":"+port, mux)
-	log.Fatal(err)
+	errorChannel <- err
 }
 
 func redirectionHandler(w http.ResponseWriter, req *http.Request) {
