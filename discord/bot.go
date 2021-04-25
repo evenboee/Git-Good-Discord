@@ -1,12 +1,11 @@
 package discord
 
 import (
-	"errors"
 	"fmt"
+	"git-good-discord/discord/discord_messages"
 	"git-good-discord/discord/discord_structs"
 	"git-good-discord/utils"
 	"github.com/bwmarrin/discordgo"
-	"log"
 	"os"
 	"os/signal"
 	"strings"
@@ -51,14 +50,6 @@ func (i Implementation) Start(errorChan chan error) {
 	os.Exit(0) // Sending signal as original signal was consumed
 }
 
-
-func (i Implementation) SendMessage(msg discord_structs.Message) error {
-	if session == nil { return errors.New("session is not open") }
-	_, err := session.ChannelMessageSend(msg.ChannelID, msg.Content)
-	return err
-}
-
-
 func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore messages sent by bot
 	if m.Author.ID == s.State.User.ID { return }
@@ -67,48 +58,35 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		parts := strings.Split(m.Content, " ")
 		command := strings.Trim(parts[0], "!")
 		info := parts[1:]
-		msg := ""
 		switch command {
 		case "command":
-			msg = fmt.Sprintf("Command: %s\nInfo: %v", command, info)
-			break
+			err := GetImplementation().SendMessage(discord_structs.Message{
+				ChannelID: m.ChannelID,
+				Message:   fmt.Sprintf("Command: %s\nInfo: %v", command, info),
+				Mentions:  []string{m.Author.Mention()},
+			})
+			if err != nil {
+				return
+			}
 		case "get":
-			if len(info) == 0 {
-				msg = "Specify what you want to get"
-			} else {
-				if info[0] == "channel_id" {
-					msg = "Channel_id: " + m.ChannelID
-				} else {
-					msg = info[0] + " not recognized"
-				}
+			err := GetImplementation().SendMessage(discord_messages.GetChannel(m, "!"))
+			if err != nil {
+				return 
 			}
 		case "ping":
-			rl := ""
-			if len(info) == 0 {
-				rl = "everyone"
-			} else { rl = info[0] }
-
-			roles, err := s.GuildRoles(m.GuildID)
+			err := GetImplementation().SendMessage(discord_messages.Ping(s,m, "!"))
 			if err != nil {
-				msg = "Error: Failed to get roles"
+				return
 			}
-			for _, role := range roles {
-				if strings.Contains(strings.ToLower(role.Name), rl) {
-					msg = role.Mention()
-					break
-				}
-			}
-			if msg == "" {
-				msg = "Role \"" + rl + "\" not found"
-			}
-			break
 		default:
-			msg = fmt.Sprintf("Command: \"%s\" not recognized", command)
-		}
-
-		_, err := s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s\n%s", m.Author.Mention(), msg))
-		if err != nil {
-			log.Fatalln("Failed to send message")
+			err := GetImplementation().SendMessage(discord_structs.Message{
+				ChannelID: m.ChannelID,
+				Message:   fmt.Sprintf("Command: \"%s\" not recognized", command),
+				Mentions:  []string{m.Author.Mention()},
+			})
+			if err != nil {
+				return
+			}
 		}
 	}
 }

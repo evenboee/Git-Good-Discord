@@ -19,6 +19,7 @@ func main() {
 	// Making error channel in case of fatal error
 	errorChannel := make(chan error)
 	go http_serving.StartWebHandler(errorChannel)
+	go abstraction.Discord.Start(errorChannel)
 
 	// Throwing a fatal error and printing it for debugging purposes.
 	err := <- errorChannel
