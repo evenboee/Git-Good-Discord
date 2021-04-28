@@ -1,5 +1,7 @@
 package abstraction_interfaces
 
-type Interface interface {
+import "git-good-discord/gitlab/gitlab_structs"
 
+type Interface interface {
+	HandleGitlabMergeRequestNotification(notification gitlab_structs.MergeRequestWebhookNotification)
 }

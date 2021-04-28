@@ -9,17 +9,24 @@ import (
 )
 
 func main() {
-	// Dependency injection
-	abstraction.Discord = discord.GetImplementation()
-	abstraction.Gitlab = gitlab.GetImplementation()
+	// Select dependency implementations to use
+	discordInterface := discord.GetImplementation()
+	gitlabInterface := gitlab.GetImplementation()
+	abstractionInterface := abstraction.GetImplementation()
 
-	discord.Abstraction = abstraction.GetImplementation()
-	gitlab.Abstraction = abstraction.GetImplementation()
+	// Dependency injection
+	abstraction.Discord = discordInterface
+	abstraction.Gitlab = gitlabInterface
+
+	discord.Abstraction = abstractionInterface
+	gitlab.Abstraction = abstractionInterface
+
+	http_serving.Gitlab = gitlabInterface
 
 	// Making error channel in case of fatal error
 	errorChannel := make(chan error)
 	go http_serving.StartWebHandler(errorChannel)
-	go abstraction.Discord.Start(errorChannel)
+	go discordInterface.Start(errorChannel)
 
 	// Throwing a fatal error and printing it for debugging purposes.
 	err := <- errorChannel

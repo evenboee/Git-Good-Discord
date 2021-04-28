@@ -64,3 +64,31 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 
 }
+
+type User struct {
+	ID int `json:"id"`
+	Name string `json:"name"`
+	Username string `json:"username"`
+	Email string `json:"email"`
+}
+
+type ObjectAttributes struct {
+	AssigneeID int `json:"assignee_id"`
+	AuthorID int `json:"author_id"`
+	CreatedAt string `json:"created_at"`
+	Description string `json:"description"`
+	MergeStatus string `json:"merge_status"`
+	SourceBranch string `json:"source_branch"`
+	TargetBranch string `json:"target_branch"`
+	Title string `json:"title"`
+}
+
+type WebhookNotificationObject struct {
+	ObjectKind string `json:"object_kind"`
+}
+
+type MergeRequestWebhookNotification struct {
+	WebhookNotificationObject
+	User User `json:"user"`
+	ObjectAttributes ObjectAttributes `json:"object_attributes"`
+}
