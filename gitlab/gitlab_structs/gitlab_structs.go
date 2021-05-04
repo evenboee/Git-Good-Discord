@@ -30,23 +30,11 @@ type WebhookRegistration struct {
 
 }
 
-// Instance refers to a Gitlab Instance
-type Instance struct {
-
-	// Host is the hostname / IP for Gitlab Instance
-	Host string `json:"host"`
-
-	// Protocol is the protocol used when communicating with Gitlab Instance.
-	// Typically, this is 'https'
-	Protocol string `json:"protocol"`
-
-}
-
 // Project refers to a unique Gitlab Project
 type Project struct {
 
-	// Instance this Project belongs to
-	Instance *Instance
+	// URL to Gitlab project
+	URL string `json:"web_url"`
 
 	// ID is the ID given to Gitlab project
 	ID int `json:"id"`
@@ -85,6 +73,7 @@ type ObjectAttributes struct {
 
 type WebhookNotificationObject struct {
 	ObjectKind string `json:"object_kind"`
+	Project Project `json:"project"`
 }
 
 type MergeRequestWebhookNotification struct {

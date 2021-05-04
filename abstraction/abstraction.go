@@ -17,6 +17,6 @@ func GetImplementation() abstraction_interfaces.Interface {
 	return &implementation
 }
 
-func (i Implementation) HandleGitlabMergeRequestNotification(notification gitlab_structs.MergeRequestWebhookNotification) {
+func (i Implementation) HandleGitlabMergeRequestNotification(notification gitlab_structs.MergeRequestWebhookNotification, discordChannelID string) {
 	// TODO: Handle Merge Request Notification, e.g. send msg in Discord chat
 }

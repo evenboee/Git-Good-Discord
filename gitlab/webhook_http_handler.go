@@ -6,12 +6,24 @@ import (
 	"git-good-discord/gitlab/gitlab_structs"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // NotificationMergeRequest Tried to use the same syntax as http.StatusX constants
 const NotificationMergeRequest = "merge_request"
 
 func (i Implementation) HandleWebhookNotificationHTTP(w http.ResponseWriter, req *http.Request) error {
+	pathSplit := strings.Split(req.URL.Path, "/")
+
+	// 3 is minimum split length
+	if len(pathSplit) < 3 {
+		return fmt.Errorf("not enough path separators (/) to get discord channel id from url path '%s'", req.URL.Path)
+	}
+
+	// Assumes that index 2 is discord Channel ID
+	// Follows format '/gitlab/{:discord_channel_id}'
+	discordChannelID := pathSplit[2]
+
 	// Originally, I thought using json.NewDecoder(req.Body) would be cleaner
 	// Unfortunately, due to the way Gitlab notifications are structured (different
 	// types have different structures),
@@ -43,7 +55,7 @@ func (i Implementation) HandleWebhookNotificationHTTP(w http.ResponseWriter, req
 			return fmt.Errorf("could not unmarshal webhook notification body as merge request notification. %v", err)
 		}
 
-		Abstraction.HandleGitlabMergeRequestNotification(notification)
+		Abstraction.HandleGitlabMergeRequestNotification(notification, discordChannelID)
 		break
 
 	default:

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"git-good-discord/gitlab/gitlab_structs"
 	"net/http"
+	"net/url"
 )
 
 // RegisterWebhook will register a Webhook for the given Gitlab Project and
@@ -13,7 +14,16 @@ import (
 // anywhere, nor does it create some sort of webhook invocation handler. That
 // kind of functionality is up to the caller to implement.
 func (i Implementation) RegisterWebhook (project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error) {
-	url := fmt.Sprintf("%s://%s/api/v4/projects/%d/hooks", project.Instance.Protocol, project.Instance.Host, project.ID)
+	projectUrl, err := url.Parse(project.URL)
+
+	if err != nil {
+		return gitlab_structs.WebhookRegistration{}, fmt.Errorf("could not parse project url. %v", err)
+	}
+
+	// Clear path so only base git URL is used
+	projectUrl.Path = "/"
+
+	url := fmt.Sprintf("%sapi/v4/projects/%d/hooks", projectUrl.String(), project.ID)
 
 	webhookJSON, err := json.Marshal(webhook)
 
