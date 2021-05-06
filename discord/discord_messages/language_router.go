@@ -6,31 +6,20 @@ import (
 	"strings"
 )
 
-var language = Norwegian{}
-
-type languageCommands interface {
-	getChannel() []string
-	ping() []string
-}
-
-type English struct{}
-type Norwegian struct{}
-
-func getCurrentLanguage() languageCommands {
-	return language
-}
+var currentLanguagePack commands
 
 func GetChannel(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
-	languageStrings := getCurrentLanguage().getChannel()
+	getChannelLanguage := currentLanguagePack.GetChannel
+
 	_, info := splitMessage(messageCreate.Content, prefix)
 	response := ""
 	if len(info) == 0 {
-		response = languageStrings[0]
+		response = getChannelLanguage.NotSpecified
 	} else {
 		if info[0] == "channel_id" {
 			response = "Channel_id: " + messageCreate.ChannelID
 		} else {
-			response = languageStrings[1] + info[0]
+			response = placeholderHandler(getChannelLanguage.NotRecognized, info[0])
 		}
 	}
 
@@ -42,7 +31,7 @@ func GetChannel(messageCreate *discordgo.MessageCreate, prefix string) discord_s
 }
 
 func Ping(session *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
-	languageStrings := getCurrentLanguage().ping()
+	pingLanguage := currentLanguagePack.Ping
 
 	response := ""
 	mentions := make([]string, 0)
@@ -57,7 +46,7 @@ func Ping(session *discordgo.Session, messageCreate *discordgo.MessageCreate, pr
 	role = strings.ToLower(role)
 	roles, err := session.GuildRoles(messageCreate.GuildID)
 	if err != nil {
-		response = languageStrings[0]
+		response = pingLanguage.ErrorGettingRoles
 	}
 	for _, r := range roles {
 		if strings.Contains(strings.ToLower(r.Name), role) {
@@ -69,7 +58,7 @@ func Ping(session *discordgo.Session, messageCreate *discordgo.MessageCreate, pr
 	}
 	if response == "" {
 		if len(mentions) == 0 {
-			response = languageStrings[1] + " \"" + role + "\""
+			response = placeholderHandler(pingLanguage.RoleNotFound, role)
 		} else {
 			if len(info) >= 2 {
 				response = " " + strings.Join(info[1:], " ")

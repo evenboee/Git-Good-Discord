@@ -1,0 +1,10 @@
+{
+  "ping": {
+    "errorGettingRoles":"Error: Failed getting roles",
+    "roleNotFound": "Could not find role {{0}}"
+  },
+  "getChannel": {
+    "notSpecified": "Specify what you want to get",
+    "notRecognized": "Could not recognize {{0}}"
+  }
+}

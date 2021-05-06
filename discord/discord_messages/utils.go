@@ -3,6 +3,7 @@ package discord_messages
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"strconv"
 	"strings"
 )
 
@@ -36,4 +37,14 @@ func discordMention(mentioned interface{}) string {
 		}
 	}
 	return ""
+}
+
+func placeholderHandler(message string, args ...string) string{
+	for i, arg := range args {
+		index := strconv.Itoa(i)
+		if strings.Contains(message, "{{"+ index +"}}") {
+			message = strings.ReplaceAll(message, "{{"+index+"}}", arg)
+		}
+	}
+	return message
 }
