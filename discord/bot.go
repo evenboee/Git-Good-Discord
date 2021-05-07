@@ -23,13 +23,13 @@ func (i Implementation) Start(errorChan chan error) {
 	var err error
 	details, err = utils.GetDiscordToken()
 	if err != nil {
-		errorChan<-err
+		errorChan <- err
 		return
 	}
 
 	session, err = discordgo.New("Bot " + details.Token)
 	if err != nil {
-		errorChan<-err
+		errorChan <- err
 		return
 	}
 
@@ -39,7 +39,7 @@ func (i Implementation) Start(errorChan chan error) {
 
 	err = session.Open()
 	if err != nil {
-		errorChan<-err
+		errorChan <- err
 		return
 	}
 
@@ -52,7 +52,9 @@ func (i Implementation) Start(errorChan chan error) {
 
 func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore messages sent by bot
-	if m.Author.ID == s.State.User.ID { return }
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
 
 	if strings.HasPrefix(m.Content, "!") {
 		parts := strings.Split(m.Content, " ")
@@ -60,30 +62,30 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		info := parts[1:]
 		switch command {
 		case "command":
-			err := GetImplementation().SendMessage(discord_structs.Message{
+			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
 				ChannelID: m.ChannelID,
 				Message:   fmt.Sprintf("Command: %s\nInfo: %v", command, info),
 				Mentions:  []string{m.Author.Mention()},
-			})
+			}})
 			if err != nil {
 				return
 			}
 		case "get":
-			err := GetImplementation().SendMessage(discord_messages.GetChannel(m, "!"))
+			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetChannel(m, "!")})
 			if err != nil {
-				return 
+				return
 			}
 		case "ping":
-			err := GetImplementation().SendMessage(discord_messages.Ping(s,m, "!"))
+			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.Ping(s, m, "!")})
 			if err != nil {
 				return
 			}
 		default:
-			err := GetImplementation().SendMessage(discord_structs.Message{
+			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
 				ChannelID: m.ChannelID,
 				Message:   fmt.Sprintf("Command: \"%s\" not recognized", command),
 				Mentions:  []string{m.Author.Mention()},
-			})
+			}})
 			if err != nil {
 				return
 			}
