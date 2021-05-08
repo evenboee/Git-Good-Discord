@@ -2,6 +2,7 @@ package main
 
 import (
 	"git-good-discord/abstraction"
+	"git-good-discord/database"
 	"git-good-discord/discord"
 	"git-good-discord/discord/discord_messages"
 	"git-good-discord/gitlab"
@@ -26,7 +27,10 @@ func main() {
 
 	// Making error channel in case of fatal error
 	errorChannel := make(chan error)
-	//Load language packs
+	// Connect to firestore
+	database.ConnectFirestore(errorChannel)
+	defer database.Connection.Close()
+	// Load language packs
 	discord_messages.LoadLanguageFiles(errorChannel)
 	go http_serving.StartWebHandler(errorChannel)
 	go discordInterface.Start(errorChannel)
@@ -34,5 +38,5 @@ func main() {
 	// Throwing a fatal error and printing it for debugging purposes.
 	err := <- errorChannel
 	log.Println("A fatal error occured, exiting application:")
-	log.Fatal(err)
+	log.Fatalln(err)
 }
