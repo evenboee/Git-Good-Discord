@@ -3,7 +3,6 @@ package discord_messages
 import (
 	"git-good-discord/utils"
 	"io/ioutil"
-	"strings"
 )
 
 var languageFiles = make(map[string]commands)
@@ -36,7 +35,7 @@ func getLanguageFiles() (map[string]commands, error) {
 	for _, file := range files {
 		command, err := parseLanguageFile("languages/" + file.Name())
 		if err == nil {
-			commandsMap[strings.Trim(file.Name(), ".json")] = command
+			commandsMap[command.Language] = command
 		}
 	}
 	return commandsMap, nil

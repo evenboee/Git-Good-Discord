@@ -31,5 +31,5 @@ func buildMentions(mentions []string) string {
 	for _, mention := range mentions {
 		mentionString += mention
 	}
-	return mentionString
+	return mentionString + " "
 }

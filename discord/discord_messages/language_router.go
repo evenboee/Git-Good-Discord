@@ -3,6 +3,7 @@ package discord_messages
 import (
 	"git-good-discord/discord/discord_structs"
 	"github.com/bwmarrin/discordgo"
+	"log"
 	"strings"
 )
 
@@ -71,5 +72,57 @@ func Ping(session *discordgo.Session, messageCreate *discordgo.MessageCreate, pr
 		ChannelID: messageCreate.ChannelID,
 		Message:   response,
 		Mentions:  mentions,
+	}
+}
+
+func ReloadLanguage(messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage{
+	reloadLanguage := currentLanguagePack.ReloadLanguage
+
+	response := ""
+
+	err := ReloadLanguageFiles()
+	if err != nil {
+		log.Print("Problem reloading language pack: ")
+		log.Println(err)
+		response = reloadLanguage.ErrorReloading
+	} else {
+		response = reloadLanguage.SuccessfullyReloaded
+		currentLanguagePack = languageFiles[currentLanguagePack.Language]
+	}
+
+
+	return discord_structs.EmbeddedMessage{
+		Message:      discord_structs.Message{
+			ChannelID: messageCreate.ChannelID,
+			Message:   response,
+			Mentions: []string{messageCreate.Author.Mention()},
+		},
+	}
+}
+
+func ChangeLanguage(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.EmbeddedMessage{
+	changeLanguage := currentLanguagePack.ChangeLanguage
+
+	response := ""
+	_, info := splitMessage(messageCreate.Content, prefix)
+	if len(info) == 0 {
+		response = changeLanguage.NoParam
+	} else {
+		language := strings.ToLower(info[0])
+		if languageFiles[language] == (commands{}) {
+			//Language is not available
+			response = placeholderHandler(changeLanguage.InvalidLanguage, language)
+		} else {
+			response = placeholderHandler(changeLanguage.Successful, language)
+			currentLanguagePack = languageFiles[language]
+		}
+	}
+
+	return discord_structs.EmbeddedMessage{
+		Message:      discord_structs.Message{
+			ChannelID: messageCreate.ChannelID,
+			Message:   response,
+			Mentions: []string{messageCreate.Author.Mention()},
+		},
 	}
 }

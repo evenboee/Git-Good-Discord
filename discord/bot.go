@@ -81,6 +81,16 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 				if err != nil {
 					return
 				}
+			case "reload":
+				err := i.SendMessage(discord_messages.ReloadLanguage(m))
+				if err != nil {
+					return
+				}
+			case "language":
+				err := i.SendMessage(discord_messages.ChangeLanguage(m, "!"))
+				if err != nil {
+					return
+				}
 			default:
 				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
 					ChannelID: m.ChannelID,
