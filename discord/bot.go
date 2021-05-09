@@ -33,7 +33,7 @@ func (i Implementation) Start(errorChan chan error) {
 		return
 	}
 
-	session.AddHandler(messageHandler)
+	session.AddHandler(getMessageHandler(i))
 
 	session.Identify.Intents = discordgo.IntentsGuildMessages
 
@@ -50,44 +50,46 @@ func (i Implementation) Start(errorChan chan error) {
 	os.Exit(0) // Sending signal as original signal was consumed
 }
 
-func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// Ignore messages sent by bot
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
+func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordgo.MessageCreate) {
+	return func (s *discordgo.Session, m *discordgo.MessageCreate) {
+		// Ignore messages sent by bot
+		if m.Author.ID == s.State.User.ID {
+			return
+		}
 
-	if strings.HasPrefix(m.Content, "!") {
-		parts := strings.Split(m.Content, " ")
-		command := strings.Trim(parts[0], "!")
-		info := parts[1:]
-		switch command {
-		case "command":
-			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
-				ChannelID: m.ChannelID,
-				Message:   fmt.Sprintf("Command: %s\nInfo: %v", command, info),
-				Mentions:  []string{m.Author.Mention()},
-			}})
-			if err != nil {
-				return
-			}
-		case "get":
-			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetChannel(m, "!")})
-			if err != nil {
-				return
-			}
-		case "ping":
-			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.Ping(s, m, "!")})
-			if err != nil {
-				return
-			}
-		default:
-			err := GetImplementation().SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
-				ChannelID: m.ChannelID,
-				Message:   fmt.Sprintf("Command: \"%s\" not recognized", command),
-				Mentions:  []string{m.Author.Mention()},
-			}})
-			if err != nil {
-				return
+		if strings.HasPrefix(m.Content, "!") {
+			parts := strings.Split(m.Content, " ")
+			command := strings.Trim(parts[0], "!")
+			info := parts[1:]
+			switch command {
+			case "command":
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
+					ChannelID: m.ChannelID,
+					Message:   fmt.Sprintf("Command: %s\nInfo: %v", command, info),
+					Mentions:  []string{m.Author.Mention()},
+				}})
+				if err != nil {
+					return
+				}
+			case "get":
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetChannel(m, "!")})
+				if err != nil {
+					return
+				}
+			case "ping":
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.Ping(s, m, "!")})
+				if err != nil {
+					return
+				}
+			default:
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
+					ChannelID: m.ChannelID,
+					Message:   fmt.Sprintf("Command: \"%s\" not recognized", command),
+					Mentions:  []string{m.Author.Mention()},
+				}})
+				if err != nil {
+					return
+				}
 			}
 		}
 	}

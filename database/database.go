@@ -1,7 +1,6 @@
 package database
 
-import interfaces "git-good-discord/database/database_interfaces"
+import "git-good-discord/database/database_interfaces"
 
-var Connection interfaces.Database = FirestoreConnection{
-	open:   false,
-}
+// Global database connection
+var databaseConnection database_interfaces.DatabaseConnection

@@ -55,7 +55,7 @@ func (i Implementation) HandleWebhookNotificationHTTP(w http.ResponseWriter, req
 			return fmt.Errorf("could not unmarshal webhook notification body as merge request notification. %v", err)
 		}
 
-		Abstraction.HandleGitlabMergeRequestNotification(notification, discordChannelID)
+		i.AbstractionService.HandleGitlabMergeRequestNotification(notification, discordChannelID)
 		break
 
 	default:
