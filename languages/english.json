@@ -15,6 +15,12 @@
   "changeLang": {
     "noParam": "Please enter a language",
     "invalidLang": "Language \"{{0}}\" is not available",
-    "successful": "The language is changed to {{0}}"
+    "successful": "The language is changed to {{0}}",
+    "databaseSetFail": "Failed to set language",
+    "notAuthorized": "You are not authorized to change language"
+  },
+  "setPrefix": {
+    "notAuthorized": "You are not authorized to change prefix",
+    "successful": "Prefix set to {{0}}"
   }
 }

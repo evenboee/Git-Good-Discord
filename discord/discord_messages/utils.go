@@ -48,3 +48,16 @@ func placeholderHandler(message string, args ...string) string{
 	}
 	return message
 }
+
+func memberIsAdmin(member *discordgo.Member, roles []*discordgo.Role) bool {
+	adminID := ""
+	for _, role := range roles {
+		if role.Name == "Admin" { adminID = role.ID }
+	}
+	if adminID == "" { return false }
+
+	for _, role := range member.Roles {
+		if role == adminID { return true }
+	}
+	return false
+}

@@ -15,6 +15,12 @@
   "changeLang": {
     "noParam": "Vennligst fortell meg språket du ønsker",
     "invalidLang": "Språket du valgte er ikke tilgjengelig",
-    "successful": "Språket er endret til {{0}}"
+    "successful": "Språket er endret til {{0}}",
+    "databaseSetFail": "Klarte ikke å sette språket",
+    "notAuthorized": "Du er ikke autorisert til å bytte språk"
+  },
+  "setPrefix": {
+    "notAuthorized": "Du er ikke autorisert til å bytte prefiks",
+    "successful": "Prefiks endret til {{0}}"
   }
 }

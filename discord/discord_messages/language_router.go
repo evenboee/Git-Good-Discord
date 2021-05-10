@@ -1,6 +1,7 @@
 package discord_messages
 
 import (
+	"git-good-discord/database/database_interfaces"
 	"git-good-discord/discord/discord_structs"
 	"github.com/bwmarrin/discordgo"
 	"log"
@@ -9,8 +10,13 @@ import (
 
 var currentLanguagePack commands
 
-func GetGetChannel(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
-	getChannelLanguage := currentLanguagePack.GetChannel
+func GetGetChannel(messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.Message {
+	var getChannelLanguage GetChannel
+	if v, ok := languageFiles[language]; ok {
+		getChannelLanguage = v.GetChannel
+	} else {
+		getChannelLanguage = languageFiles["english"].GetChannel
+	}
 
 	_, info := splitMessage(messageCreate.Content, prefix)
 	response := ""
@@ -31,8 +37,13 @@ func GetGetChannel(messageCreate *discordgo.MessageCreate, prefix string) discor
 	}
 }
 
-func GetPing(session *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
-	pingLanguage := currentLanguagePack.Ping
+func GetPing(session *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.Message {
+	var pingLanguage Ping
+	if v, ok := languageFiles[language]; ok {
+		pingLanguage = v.Ping
+	} else {
+		pingLanguage = languageFiles["english"].Ping
+	}
 
 	response := ""
 	mentions := make([]string, 0)
@@ -75,8 +86,13 @@ func GetPing(session *discordgo.Session, messageCreate *discordgo.MessageCreate,
 	}
 }
 
-func GetReloadLanguage(messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage{
-	reloadLanguage := currentLanguagePack.ReloadLanguage
+func GetReloadLanguage(messageCreate *discordgo.MessageCreate, language string) discord_structs.EmbeddedMessage{
+	var reloadLanguage ReloadLang
+	if v, ok := languageFiles[language]; ok {
+		reloadLanguage = v.ReloadLanguage
+	} else {
+		reloadLanguage = languageFiles["english"].ReloadLanguage
+	}
 
 	response := ""
 
@@ -100,21 +116,46 @@ func GetReloadLanguage(messageCreate *discordgo.MessageCreate) discord_structs.E
 	}
 }
 
-func GetChangeLanguage(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.EmbeddedMessage{
-	changeLanguage := currentLanguagePack.ChangeLanguage
+func GetChangeLanguage(db database_interfaces.Database, s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.EmbeddedMessage{
+	var changeLanguage ChangeLanguage
+	if v, ok := languageFiles[language]; ok {
+		changeLanguage = v.ChangeLanguage
+	} else {
+		changeLanguage = languageFiles["english"].ChangeLanguage
+	}
+
+	roles, err := s.GuildRoles(messageCreate.GuildID)
+	if err != nil { return discord_structs.EmbeddedMessage{} }
+
+	isAdmin := memberIsAdmin(messageCreate.Member, roles)
+
+	if !isAdmin {
+		return discord_structs.EmbeddedMessage{
+			Message: discord_structs.Message{
+				ChannelID: messageCreate.ChannelID,
+				Message:   changeLanguage.NotAuthorized,
+				Mentions:  []string{messageCreate.Author.Mention()},
+			},
+		}
+	}
 
 	response := ""
 	_, info := splitMessage(messageCreate.Content, prefix)
 	if len(info) == 0 {
 		response = changeLanguage.NoParam
 	} else {
-		language := strings.ToLower(info[0])
-		if languageFiles[language] == (commands{}) {
+		nLanguage := strings.ToLower(info[0])
+		if languageFiles[nLanguage] == (commands{}) {
 			//Language is not available
-			response = placeholderHandler(changeLanguage.InvalidLanguage, language)
+			response = placeholderHandler(changeLanguage.InvalidLanguage, nLanguage)
 		} else {
-			response = placeholderHandler(changeLanguage.Successful, language)
-			currentLanguagePack = languageFiles[language]
+			response = placeholderHandler(changeLanguage.Successful, nLanguage)
+			currentLanguagePack = languageFiles[nLanguage]
+
+			err := db.GetConnection().SetChannelLanguage(messageCreate.ChannelID, nLanguage)
+			if err != nil {
+				response = changeLanguage.DatabaseSetFail
+			}
 		}
 	}
 
@@ -124,5 +165,42 @@ func GetChangeLanguage(messageCreate *discordgo.MessageCreate, prefix string) di
 			Message:   response,
 			Mentions: []string{messageCreate.Author.Mention()},
 		},
+	}
+}
+
+func SetPrefix(db database_interfaces.Database, s *discordgo.Session, m *discordgo.MessageCreate, nPrefix string, language string) discord_structs.Message {
+	var languagePack setPrefix
+	if v, ok := languageFiles[language]; ok {
+		languagePack = v.SetPrefix
+	} else {
+		languagePack = languageFiles["english"].SetPrefix
+	}
+
+	roles, err := s.GuildRoles(m.GuildID)
+	if err != nil { return discord_structs.Message{} }
+
+	isAdmin := memberIsAdmin(m.Member, roles)
+
+	if !isAdmin {
+		return discord_structs.Message{
+			ChannelID: m.ChannelID,
+			Message:   languagePack.NotAuthorized,
+			Mentions:  []string{m.Author.Mention()},
+		}
+	}
+
+	err = db.GetConnection().SetChannelPrefix(m.ChannelID, nPrefix)
+	if err != nil {
+		return discord_structs.Message{
+			ChannelID: m.ChannelID,
+			Message:   languagePack.NotAuthorized,
+			Mentions:  []string{m.Author.Mention()},
+		}
+	}
+
+	return discord_structs.Message{
+		ChannelID: m.ChannelID,
+		Message:   placeholderHandler(languagePack.Successful, nPrefix),
+		Mentions:  []string{m.Author.Mention()},
 	}
 }

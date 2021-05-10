@@ -6,8 +6,10 @@ import (
 	"git-good-discord/discord/discord_structs"
 	"git-good-discord/utils"
 	"github.com/bwmarrin/discordgo"
+	"log"
 	"os"
 	"os/signal"
+	"regexp"
 	"strings"
 	"syscall"
 )
@@ -15,6 +17,8 @@ import (
 var (
 	session *discordgo.Session
 	details utils.DiscordDetails
+
+	setPrefixRegex = regexp.MustCompile("!set prefix (.+)")
 )
 
 // Based on: https://github.com/bwmarrin/discordgo/blob/master/examples/pingpong/main.go
@@ -57,9 +61,25 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 			return
 		}
 
-		if strings.HasPrefix(m.Content, "!") {
+		settings, err := i.DatabaseService.GetConnection().GetChannelSettings(m.ChannelID)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		prefix := "!"
+		if settings.Prefix != "" { prefix = settings.Prefix }
+		language := "english"
+		if settings.Language != "" { language = settings.Language }
+
+		if match := setPrefixRegex.FindStringSubmatch(m.Content); len(match) == 2 {
+			nPrefix := match[1]
+			_ = i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.SetPrefix(i.DatabaseService, s, m, nPrefix, language)})
+			return
+		}
+
+		if strings.HasPrefix(m.Content, prefix) {
 			parts := strings.Split(m.Content, " ")
-			command := strings.Trim(parts[0], "!")
+			command := strings.Trim(parts[0], prefix)
 			info := parts[1:]
 			switch command {
 			case "command":
@@ -72,22 +92,22 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 					return
 				}
 			case "get":
-				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetGetChannel(m, "!")})
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetGetChannel(m, prefix, language)})
 				if err != nil {
 					return
 				}
 			case "ping":
-				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetPing(s, m, "!")})
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetPing(s, m, prefix, language)})
 				if err != nil {
 					return
 				}
 			case "reload":
-				err := i.SendMessage(discord_messages.GetReloadLanguage(m))
+				err := i.SendMessage(discord_messages.GetReloadLanguage(m, language))
 				if err != nil {
 					return
 				}
 			case "language":
-				err := i.SendMessage(discord_messages.GetChangeLanguage(m, "!"))
+				err := i.SendMessage(discord_messages.GetChangeLanguage(i.DatabaseService, s, m, prefix, language))
 				if err != nil {
 					return
 				}
