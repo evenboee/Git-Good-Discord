@@ -20,10 +20,12 @@ func (i Implementation) RegisterWebhook (project gitlab_structs.Project, webhook
 		return gitlab_structs.WebhookRegistration{}, fmt.Errorf("could not parse project url. %v", err)
 	}
 
-	// Clear path so only base git URL is used
-	projectUrl.Path = "/"
+	// Set correct URL parts
+	projectUrl.Path = fmt.Sprintf("api/v4/projects/%d/hooks", project.ID)
+	projectUrl.RawQuery = ""
+	projectUrl.Fragment = ""
 
-	url := fmt.Sprintf("%sapi/v4/projects/%d/hooks", projectUrl.String(), project.ID)
+	url := projectUrl.String()
 
 	webhookJSON, err := json.Marshal(webhook)
 
