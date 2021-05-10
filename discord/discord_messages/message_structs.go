@@ -1,30 +1,30 @@
 package discord_messages
 
 type commands struct {
-	Ping ping `json:"ping"`
-	GetChannel getChannel `json:"getChannel"`
-	ReloadLanguage reloadLang `json:"reloadLang"`
-	ChangeLanguage changeLang `json:"changeLang"`
-	Language string `json:"language"`
+	Ping           Ping           `json:"ping"`
+	GetChannel     GetChannel     `json:"getChannel"`
+	ReloadLanguage ReloadLang     `json:"reloadLang"`
+	ChangeLanguage ChangeLanguage `json:"changeLang"`
+	Language       string         `json:"language"`
 }
 
-type ping struct {
+type Ping struct {
 	ErrorGettingRoles string `json:"errorGettingRoles"`
 	RoleNotFound string `json:"roleNotFound"`
 }
 
-type getChannel struct {
+type GetChannel struct {
 	NotSpecified string `json:"notSpecified"`
 	NotRecognized string `json:"notRecognized"`
 }
 
-type reloadLang struct {
+type ReloadLang struct {
 	ErrorReloading string `json:"errorReloading"`
 	SuccessfullyReloaded string `json:"successfullyReloaded"`
 }
 
-type changeLang struct {
-	NoParam string `json:"no_param"`
+type ChangeLanguage struct {
+	NoParam string `json:"noParam"`
 	InvalidLanguage string `json:"invalidLang"`
 	Successful string `json:"successful"`
 }

@@ -72,22 +72,22 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 					return
 				}
 			case "get":
-				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetChannel(m, "!")})
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetGetChannel(m, "!")})
 				if err != nil {
 					return
 				}
 			case "ping":
-				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.Ping(s, m, "!")})
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetPing(s, m, "!")})
 				if err != nil {
 					return
 				}
 			case "reload":
-				err := i.SendMessage(discord_messages.ReloadLanguage(m))
+				err := i.SendMessage(discord_messages.GetReloadLanguage(m))
 				if err != nil {
 					return
 				}
 			case "language":
-				err := i.SendMessage(discord_messages.ChangeLanguage(m, "!"))
+				err := i.SendMessage(discord_messages.GetChangeLanguage(m, "!"))
 				if err != nil {
 					return
 				}

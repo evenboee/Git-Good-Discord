@@ -9,7 +9,7 @@ import (
 
 var currentLanguagePack commands
 
-func GetChannel(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
+func GetGetChannel(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
 	getChannelLanguage := currentLanguagePack.GetChannel
 
 	_, info := splitMessage(messageCreate.Content, prefix)
@@ -31,7 +31,7 @@ func GetChannel(messageCreate *discordgo.MessageCreate, prefix string) discord_s
 	}
 }
 
-func Ping(session *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
+func GetPing(session *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string) discord_structs.Message {
 	pingLanguage := currentLanguagePack.Ping
 
 	response := ""
@@ -75,7 +75,7 @@ func Ping(session *discordgo.Session, messageCreate *discordgo.MessageCreate, pr
 	}
 }
 
-func ReloadLanguage(messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage{
+func GetReloadLanguage(messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage{
 	reloadLanguage := currentLanguagePack.ReloadLanguage
 
 	response := ""
@@ -100,7 +100,7 @@ func ReloadLanguage(messageCreate *discordgo.MessageCreate) discord_structs.Embe
 	}
 }
 
-func ChangeLanguage(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.EmbeddedMessage{
+func GetChangeLanguage(messageCreate *discordgo.MessageCreate, prefix string) discord_structs.EmbeddedMessage{
 	changeLanguage := currentLanguagePack.ChangeLanguage
 
 	response := ""

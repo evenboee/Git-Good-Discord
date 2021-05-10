@@ -1,8 +1,10 @@
 package discord_messages
 
 import (
+	"fmt"
 	"git-good-discord/utils"
 	"io/ioutil"
+	"reflect"
 )
 
 var languageFiles = make(map[string]commands)
@@ -12,6 +14,50 @@ func ReloadLanguageFiles() error {
 	tempLanguageFiles, err := getLanguageFiles()
 	if err != nil {
 		return err
+	}
+	// Get the english language files, that will be used for substitution.
+	englishFile := tempLanguageFiles["english"]
+	english := reflect.ValueOf(&englishFile)
+	// Loop through all languages (except english)
+	for languageName := range tempLanguageFiles {
+		if languageName != "english" {
+			//Set language file to be the language being checked
+			lang := tempLanguageFiles[languageName]
+			// Get element for the commands struct
+			commandsType := reflect.ValueOf(&lang).Elem()
+			//Loop through each fields
+			for i := 0; i < commandsType.NumField(); i++ {
+				// Get the interface of each of the fields
+				command := commandsType.Field(i).Interface()
+				// Create a reflection of the interface
+				e := reflect.ValueOf(command)
+				// Loop through it if it is a struct
+				if reflect.ValueOf(command).Kind() == reflect.Struct {
+					for j := 0; j < e.NumField(); j++ {
+						// If it is empty
+						if e.Field(j).String() == "" {
+							//Get name of struct, i.e ping
+							cmdStruct := commandsType.Field(i).Type().Name()
+							//Get entry, i.e roleNotFound
+							cmdEntry := e.Type().Field(j).Name
+
+							// Get the struct of the english language pack
+							englishOuterStruct := english.Elem().FieldByName(cmdStruct).Interface()
+							// Get the actual value from the english language pack
+							englishValue := reflect.ValueOf(englishOuterStruct).FieldByName(cmdEntry)
+
+							// Get the indirect reflection of lang
+							tempLang := reflect.Indirect(reflect.ValueOf(&lang))
+							// Set the value to be the english value
+							tempLang.FieldByName(cmdStruct).FieldByName(cmdEntry).SetString(fmt.Sprintf("%v", englishValue))
+
+							// Replace the language pack file with updated info
+							tempLanguageFiles[languageName] = lang
+						}
+					}
+				}
+			}
+		}
 	}
 	languageFiles = tempLanguageFiles
 
