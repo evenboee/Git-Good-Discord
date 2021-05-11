@@ -22,5 +22,14 @@
   "setPrefix": {
     "notAuthorized": "You are not authorized to change prefix",
     "successful": "Prefix set to {{0}}"
+  },
+  "helpCommand": {
+    "get": "Returns channel ID",
+    "ping": "Tags a group",
+    "reload": "Reloads the language files",
+    "language": "Switches to other language",
+    "help": "Displays this menu",
+    "adminOnly": "(Admin only)",
+    "setPrefix": "Sets the prefix for used for commands"
   }
 }

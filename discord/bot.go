@@ -67,21 +67,21 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 			return
 		}
 		prefix := "!"
-		if settings.Prefix != "" { prefix = settings.Prefix }
+		if settings.Prefix != "" { prefix = strings.ToLower(settings.Prefix) }
 		language := "english"
 		if settings.Language != "" { language = settings.Language }
 
-		if match := setPrefixRegex.FindStringSubmatch(m.Content); len(match) == 2 {
+		if match := setPrefixRegex.FindStringSubmatch(strings.ToLower(m.Content)); len(match) == 2 {
 			nPrefix := match[1]
 			_ = i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.SetPrefix(i.DatabaseService, s, m, nPrefix, language)})
 			return
 		}
 
-		if strings.HasPrefix(m.Content, prefix) {
+		if strings.HasPrefix(strings.ToLower(m.Content), prefix) {
 			parts := strings.Split(m.Content, " ")
-			command := strings.Trim(parts[0], prefix)
+			command := strings.Trim(strings.ToLower(parts[0]), prefix)
 			info := parts[1:]
-			switch command {
+			switch strings.ToLower(command) {
 			case "command":
 				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_structs.Message{
 					ChannelID: m.ChannelID,
@@ -108,6 +108,11 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 				}
 			case "language":
 				err := i.SendMessage(discord_messages.GetChangeLanguage(i.DatabaseService, s, m, prefix, language))
+				if err != nil {
+					return
+				}
+			case "help":
+				err := i.SendMessage(discord_messages.GetHelp(s, m, prefix))
 				if err != nil {
 					return
 				}

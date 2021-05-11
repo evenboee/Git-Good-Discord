@@ -22,5 +22,14 @@
   "setPrefix": {
     "notAuthorized": "Du er ikke autorisert til å bytte prefiks",
     "successful": "Prefiks endret til {{0}}"
+  },
+  "helpCommand": {
+    "get": "Returnerer channel ID",
+    "ping": "Tagger en gruppe",
+    "reload": "Laste inn språk pakkene på nytt",
+    "language": "Bytter til et annet språk",
+    "help": "Viser denne menyen",
+    "adminOnly": "(Kun Admin)",
+    "setPrefix": "Setter prefix'en for kommandoer"
   }
 }

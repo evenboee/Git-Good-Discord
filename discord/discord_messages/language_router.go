@@ -86,7 +86,7 @@ func GetPing(session *discordgo.Session, messageCreate *discordgo.MessageCreate,
 	}
 }
 
-func GetReloadLanguage(messageCreate *discordgo.MessageCreate, language string) discord_structs.EmbeddedMessage{
+func GetReloadLanguage(messageCreate *discordgo.MessageCreate, language string) discord_structs.EmbeddedMessage {
 	var reloadLanguage ReloadLang
 	if v, ok := languageFiles[language]; ok {
 		reloadLanguage = v.ReloadLanguage
@@ -106,17 +106,16 @@ func GetReloadLanguage(messageCreate *discordgo.MessageCreate, language string) 
 		currentLanguagePack = languageFiles[currentLanguagePack.Language]
 	}
 
-
 	return discord_structs.EmbeddedMessage{
-		Message:      discord_structs.Message{
+		Message: discord_structs.Message{
 			ChannelID: messageCreate.ChannelID,
 			Message:   response,
-			Mentions: []string{messageCreate.Author.Mention()},
+			Mentions:  []string{messageCreate.Author.Mention()},
 		},
 	}
 }
 
-func GetChangeLanguage(db database_interfaces.Database, s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.EmbeddedMessage{
+func GetChangeLanguage(db database_interfaces.Database, s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.EmbeddedMessage {
 	var changeLanguage ChangeLanguage
 	if v, ok := languageFiles[language]; ok {
 		changeLanguage = v.ChangeLanguage
@@ -125,7 +124,9 @@ func GetChangeLanguage(db database_interfaces.Database, s *discordgo.Session, me
 	}
 
 	roles, err := s.GuildRoles(messageCreate.GuildID)
-	if err != nil { return discord_structs.EmbeddedMessage{} }
+	if err != nil {
+		return discord_structs.EmbeddedMessage{}
+	}
 
 	isAdmin := memberIsAdmin(messageCreate.Member, roles)
 
@@ -160,24 +161,26 @@ func GetChangeLanguage(db database_interfaces.Database, s *discordgo.Session, me
 	}
 
 	return discord_structs.EmbeddedMessage{
-		Message:      discord_structs.Message{
+		Message: discord_structs.Message{
 			ChannelID: messageCreate.ChannelID,
 			Message:   response,
-			Mentions: []string{messageCreate.Author.Mention()},
+			Mentions:  []string{messageCreate.Author.Mention()},
 		},
 	}
 }
 
 func SetPrefix(db database_interfaces.Database, s *discordgo.Session, m *discordgo.MessageCreate, nPrefix string, language string) discord_structs.Message {
-	var languagePack setPrefix
+	var languagePack SetLanguagePrefix
 	if v, ok := languageFiles[language]; ok {
-		languagePack = v.SetPrefix
+		languagePack = v.SetLanguagePrefix
 	} else {
-		languagePack = languageFiles["english"].SetPrefix
+		languagePack = languageFiles["english"].SetLanguagePrefix
 	}
 
 	roles, err := s.GuildRoles(m.GuildID)
-	if err != nil { return discord_structs.Message{} }
+	if err != nil {
+		return discord_structs.Message{}
+	}
 
 	isAdmin := memberIsAdmin(m.Member, roles)
 
@@ -202,5 +205,34 @@ func SetPrefix(db database_interfaces.Database, s *discordgo.Session, m *discord
 		ChannelID: m.ChannelID,
 		Message:   placeholderHandler(languagePack.Successful, nPrefix),
 		Mentions:  []string{m.Author.Mention()},
+	}
+}
+
+func GetHelp(s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string) discord_structs.EmbeddedMessage {
+	helpLanguage := currentLanguagePack.HelpCommand
+
+	roles, err := s.GuildRoles(messageCreate.GuildID)
+	if err != nil {
+		return discord_structs.EmbeddedMessage{}
+	}
+	response := "\n***Commands***\n> " +
+		prefix + "help - " + helpLanguage.Help + "\n> " +
+		prefix + "get <channel-name> - " + helpLanguage.Get + "\n> " +
+		prefix + "ping <group> - " + helpLanguage.Ping + "\n"
+
+	if memberIsAdmin(messageCreate.Member, roles) {
+		response += "\n" +
+			"***Admin commands***\n> " +
+			prefix + "reload - " + helpLanguage.Reload + " " + helpLanguage.AdminOnly + "\n> " +
+			prefix + "language <language> - " + helpLanguage.Reload + " " + helpLanguage.AdminOnly + "\n> " +
+			"!" + "set prefix <prefix> - " + helpLanguage.SetPrefix + " " + helpLanguage.AdminOnly + "\n"
+	}
+
+	return discord_structs.EmbeddedMessage{
+		Message: discord_structs.Message{
+			ChannelID: messageCreate.ChannelID,
+			Message:   response,
+			Mentions:  []string{messageCreate.Author.Mention()},
+		},
 	}
 }
