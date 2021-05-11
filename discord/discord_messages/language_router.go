@@ -1,6 +1,7 @@
 package discord_messages
 
 import (
+	"fmt"
 	"git-good-discord/database/database_interfaces"
 	"git-good-discord/discord/discord_structs"
 	"github.com/bwmarrin/discordgo"
@@ -217,6 +218,8 @@ func GetHelp(s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefi
 	}
 	response := "\n***Commands***\n> " +
 		prefix + "help - " + helpLanguage.Help + "\n> " +
+		prefix + "subscribe <instance>/<repo_id>/<gitlab_username> <type1,type2,...> - " + helpLanguage.Subscribe + "\n> " +
+		prefix + "unsubscribe <instance>/<repo_id>/<gitlab_username> - " + helpLanguage.Unsubscribe + "\n> " +
 		prefix + "get <channel-name> - " + helpLanguage.Get + "\n> " +
 		prefix + "ping <group> - " + helpLanguage.Ping + "\n"
 
@@ -234,5 +237,96 @@ func GetHelp(s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefi
 			Message:   response,
 			Mentions:  []string{messageCreate.Author.Mention()},
 		},
+	}
+}
+
+func GetSubscribe(db database_interfaces.Database, m *discordgo.MessageCreate, language string) discord_structs.Message {
+	response := ""
+
+	var languagePack Subscribe
+	if v, ok := languageFiles[language]; ok {
+		languagePack = v.Subscribe
+	} else {
+		languagePack = languageFiles["english"].Subscribe
+	}
+
+	parts := strings.Split(m.Content, " ")
+	if len(parts) == 3 {
+		path := strings.Split(parts[1], "/")
+		if len(path) == 3 {
+			instance := path[0]
+			repoID := path[1]
+			gitlabUsername := path[2]
+
+			issues := false
+			merge_requests := false
+
+			subscriptions := strings.Split(parts[2], ",")
+			var newSubscriptions []string
+			for _, v := range subscriptions {
+				switch v {
+				case "issues":
+					issues = true
+					newSubscriptions = append(newSubscriptions, "issues")
+				case "merge_requests":
+					merge_requests = true
+					newSubscriptions = append(newSubscriptions, "merge_requests")
+				}
+			}
+
+			err := db.GetConnection().AddSubscriber(m.ChannelID, instance, repoID, gitlabUsername, m.Author.ID, issues, merge_requests)
+			if err != nil {
+				response = languagePack.DatabaseAddFail
+			} else {
+				response = placeholderHandler(languagePack.Successful, parts[1], strings.Join(newSubscriptions, ","))
+			}
+		} else {
+			response = languagePack.PathFormatError
+		}
+	} else {
+		response = placeholderHandler(languagePack.PathFormatError, fmt.Sprintf("%d", len(parts)))
+	}
+
+	return discord_structs.Message{
+		ChannelID: m.ChannelID,
+		Message:   response,
+		Mentions:  []string{m.Author.Mention()},
+	}
+}
+
+func GetUnsubscribe(db database_interfaces.Database, m *discordgo.MessageCreate, language string) discord_structs.Message {
+	// Unsubscribe = delete subscriber
+	response := ""
+
+	var languagePack Unsubscribe
+	if v, ok := languageFiles[language]; ok {
+		languagePack = v.Unsubscribe
+	} else {
+		languagePack = languageFiles["english"].Unsubscribe
+	}
+
+	parts := strings.Split(m.Content, " ")
+	if len(parts) == 2 {
+		path := strings.Split(parts[1], "/")
+		if len(path) == 3 {
+			instance := path[0]
+			repoID := path[1]
+			gitlabUsername := path[2]
+			err := db.GetConnection().DeleteSubscriber(m.ChannelID, instance, repoID, gitlabUsername, m.Author.ID)
+			if err != nil {
+				response = languagePack.DatabaseRemoveFail
+			}
+			response = placeholderHandler(languagePack.Successful, parts[1])
+		} else {
+			response = languagePack.PathFormatError
+		}
+	} else {
+		response = placeholderHandler(languagePack.PartsError, fmt.Sprintf("%d", len(parts)))
+	}
+
+	return discord_structs.Message{
+		ChannelID: m.ChannelID,
+		Message:   response,
+		Mentions:  []string{m.Author.Mention()},
 	}
 }

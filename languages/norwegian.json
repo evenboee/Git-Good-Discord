@@ -30,6 +30,20 @@
     "language": "Bytter til et annet språk",
     "help": "Viser denne menyen",
     "adminOnly": "(Kun Admin)",
-    "setPrefix": "Setter prefix'en for kommandoer"
+    "setPrefix": "Setter prefix'en for kommandoer",
+    "subscribe": "Abonner til et prosjekt hendelser for en bruker",
+    "unsubscribe": "Avslutt abonnoment for hendelser på et prosjekt for en bruker"
+  },
+  "subscribe": {
+    "databaseAddFail": "Klarte ikke å abonnere",
+    "successful": "Du er nå abbonert til {{0}} for {{1}}",
+    "pathFormatError": "Ikke tydelig hva du vil abbonere på. Formatet bør være {instanse}/{repo_id}/{gitlab_username}",
+    "partsError": "Feil antall deler. Forventet 3, men fikk {{0}}"
+  },
+  "unsubscribe": {
+    "databaseRemoveFail": "Klarte ikke å avslutte abonnementet",
+    "successful": "Abonnementet på {{0}} er avsluttet",
+    "pathFormatError": "Ikke tydelig hvilket abonnoment du vil avslutte. Formatet bør være {instanse}/{repo_id}/{gitlab_username}",
+    "partsError": "Feil antall deler. Forventet 2, men fikk {{0}}"
   }
 }

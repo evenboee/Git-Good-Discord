@@ -8,6 +8,8 @@ type commands struct {
 	HelpCommand       HelpCommand       `json:"helpCommand"`
 	SetLanguagePrefix SetLanguagePrefix `json:"setPrefix"`
 	Language          string            `json:"language"`
+	Subscribe         Subscribe         `json:"subscribe"`
+	Unsubscribe       Unsubscribe       `json:"unSubscribe"`
 }
 
 type Ping struct {
@@ -39,11 +41,26 @@ type SetLanguagePrefix struct {
 }
 
 type HelpCommand struct {
-	Get       string `json:"get"`
-	Ping      string `json:"ping"`
-	Reload    string `json:"reload"`
-	Language  string `json:"language"`
-	Help      string `json:"help"`
-	AdminOnly string `json:"adminOnly"`
-	SetPrefix string `json:"setPrefix"`
+	Get         string `json:"get"`
+	Ping        string `json:"ping"`
+	Reload      string `json:"reload"`
+	Language    string `json:"language"`
+	Help        string `json:"help"`
+	AdminOnly   string `json:"adminOnly"`
+	SetPrefix   string `json:"setPrefix"`
+	Subscribe   string `json:"subscribe"`
+	Unsubscribe string `json:"unsubscribe"`
+}
+
+type Subscribe struct {
+	DatabaseAddFail string `json:"databaseAddFail"`
+	Successful      string `json:"successful"`
+	PathFormatError string `json:"pathFormatError"`
+}
+
+type Unsubscribe struct {
+	DatabaseRemoveFail string `json:"databaseRemoveFail"`
+	PathFormatError    string `json:"pathFormatError"`
+	PartsError         string `json:"partsError"`
+	Successful         string `json:"successful"`
 }

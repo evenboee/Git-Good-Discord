@@ -80,6 +80,7 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 		if strings.HasPrefix(strings.ToLower(m.Content), prefix) {
 			parts := strings.Split(m.Content, " ")
 			command := strings.Trim(strings.ToLower(parts[0]), prefix)
+
 			info := parts[1:]
 			switch strings.ToLower(command) {
 			case "command":
@@ -96,6 +97,12 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 				if err != nil {
 					return
 				}
+			case "subscribe":
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetSubscribe(i.DatabaseService, m, language)})
+				if err != nil { return }
+			case "unsubscribe":
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetUnsubscribe(i.DatabaseService, m, language)})
+				if err != nil { return }
 			case "ping":
 				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetPing(s, m, prefix, language)})
 				if err != nil {

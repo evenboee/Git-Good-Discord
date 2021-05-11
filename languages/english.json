@@ -30,6 +30,20 @@
     "language": "Switches to other language",
     "help": "Displays this menu",
     "adminOnly": "(Admin only)",
-    "setPrefix": "Sets the prefix for used for commands"
+    "setPrefix": "Sets the prefix for used for commands",
+    "subscribe": "Subscribe to project events of user",
+    "unsubscribe": "Unsubscribe from project events of user"
+  },
+  "subscribe": {
+    "databaseAddFail": "Failed to subscribe",
+    "successful": "You are now subscribed to {{0}} for {{1}}",
+    "pathFormatError": "Not clear what you want to subscribe to. Format should be {instance}/{repo_id}/{gitlab_username}",
+    "partsError": "Wrong number of parts. Expected 3, but got {{0}}"
+  },
+  "unsubscribe": {
+    "databaseRemoveFail": "Failed to unsubscribe",
+    "successful": "You are now unsubscribed from {{0}}",
+    "pathFormatError": "Not clear what you want to unsubscribe from. Format should be {instance}/{repo_id}/{gitlab_username}",
+    "partsError": "Wrong number of parts. Expected 2, but got {{0}}"
   }
 }
