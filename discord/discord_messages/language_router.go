@@ -3,7 +3,9 @@ package discord_messages
 import (
 	"fmt"
 	"git-good-discord/database/database_interfaces"
+	"git-good-discord/database/database_structs"
 	"git-good-discord/discord/discord_structs"
+	"git-good-discord/gitlab/gitlab_structs"
 	"github.com/bwmarrin/discordgo"
 	"log"
 	"strings"
@@ -328,5 +330,39 @@ func GetUnsubscribe(db database_interfaces.Database, m *discordgo.MessageCreate,
 		ChannelID: m.ChannelID,
 		Message:   response,
 		Mentions:  []string{m.Author.Mention()},
+	}
+}
+
+func NotifySubscribersOfMergeRequest(discordChannelID string, subscribers []database_structs.Subscriber, notification gitlab_structs.MergeRequestWebhookNotification) discord_structs.EmbeddedMessage {
+	notificationMergeRequestLanguage := currentLanguagePack.NotificationMergeRequest
+	mentions := make([]string, 1, 1)
+	for _, subscriber := range subscribers {
+		discordUser := &discordgo.User{ID: subscriber.DiscordUserId}
+		mentions = append(mentions, discordMention(discordUser))
+	}
+
+	authorURL := "https://" + strings.Split(notification.Project.URL, "/")[2] + "/" + notification.User.Username
+
+	return discord_structs.EmbeddedMessage{
+		Message: discord_structs.Message{
+			ChannelID: discordChannelID,
+			Message:   placeholderHandler(notificationMergeRequestLanguage.Success, notification.User.Name),
+			Mentions:  mentions,
+		},
+		MessageEmbed: discordgo.MessageEmbed{
+			URL:         notification.ObjectAttributes.URL,
+			Type:        discordgo.EmbedTypeLink,
+			Title:       notification.ObjectAttributes.Title,
+			Description: notification.ObjectAttributes.Description,
+			Timestamp:   notification.ObjectAttributes.CreatedAt,
+			Author: &discordgo.MessageEmbedAuthor{
+				URL:  authorURL,
+				Name: notification.User.Name,
+			},
+			Provider: &discordgo.MessageEmbedProvider{
+				URL:  notification.ObjectAttributes.URL,
+				Name: "Gitlab",
+			},
+		},
 	}
 }

@@ -69,6 +69,7 @@ type ObjectAttributes struct {
 	SourceBranch string `json:"source_branch"`
 	TargetBranch string `json:"target_branch"`
 	Title string `json:"title"`
+	URL string `json:"url"`
 }
 
 type WebhookNotificationObject struct {

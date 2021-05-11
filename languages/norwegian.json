@@ -45,5 +45,8 @@
     "successful": "Abonnementet på {{0}} er avsluttet",
     "pathFormatError": "Ikke tydelig hvilket abonnoment du vil avslutte. Formatet bør være {instanse}/{repo_id}/{gitlab_username}",
     "partsError": "Feil antall deler. Forventet 2, men fikk {{0}}"
+  },
+  "notifyMR":{
+    "success": "Det har kommet en ny merge request fra {{0}}, ta en titt!"
   }
 }

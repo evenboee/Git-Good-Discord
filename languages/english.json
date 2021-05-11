@@ -1,7 +1,7 @@
 {
   "language": "english",
   "ping": {
-    "errorGettingRoles":"Error: Failed getting roles",
+    "errorGettingRoles": "Error: Failed getting roles",
     "roleNotFound": "Could not find role {{0}}"
   },
   "getChannel": {
@@ -45,5 +45,9 @@
     "successful": "You are now unsubscribed from {{0}}",
     "pathFormatError": "Not clear what you want to unsubscribe from. Format should be {instance}/{repo_id}/{gitlab_username}",
     "partsError": "Wrong number of parts. Expected 2, but got {{0}}"
+    "setPrefix": "Sets the prefix for used for commands"
+  },
+  "notifyMR": {
+    "success": "There is a new merge request by {{0}}, take a look!"
   }
 }
