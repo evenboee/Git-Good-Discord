@@ -95,7 +95,12 @@ func addUsernamesIfAbsent (uniqueUsernames *map[string]string, i Implementation,
 	// Add all unique usernames from ids
 	// Only fetch user data when necessary
 	for _, id := range ids {
-		index := "id:" + string(id)
+		// Ignore if id is 0
+		if id == 0 {
+			continue
+		}
+
+		index := "id:" + strconv.Itoa(id)
 
 		if _, exists := (*uniqueUsernames)[index]; !exists {
 			user, err := i.GitlabService.GetUserByID(url, id)
