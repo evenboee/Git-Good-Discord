@@ -6,6 +6,10 @@ type Webhook struct {
 	// Url is the invocation URL of the webhook
 	Url string `json:"url"`
 
+	// Secret token to validate received payloads
+	// This value may not be set
+	SecretToken string `json:"token"`
+
 	// IssuesEvents will invoke on issue events
 	IssuesEvents bool `json:"issues_events"`
 

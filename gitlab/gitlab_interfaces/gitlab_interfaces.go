@@ -7,6 +7,10 @@ import (
 
 type Interface interface {
 	RegisterWebhook (project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error)
+	GetRegisteredWebhooks (project gitlab_structs.Project) ([]gitlab_structs.WebhookRegistration, error)
+	DoesWebhookWithURLExist (project gitlab_structs.Project, invocationURL string) (bool, error)
+	GetWebhookInvocationURL (baseURL string, discordChannelID string) (string, error)
+
     HandleWebhookNotificationHTTP(w http.ResponseWriter, req *http.Request) error
 
 	// GetUserByUsername gets user information using username.

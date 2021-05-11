@@ -62,3 +62,17 @@ func (i Implementation) RegisterWebhook (project gitlab_structs.Project, webhook
 
 	return webhookRegistration, nil
 }
+
+func (i Implementation) GetWebhookInvocationURL (baseURL string, discordChannelID string) (string, error) {
+	parsedURL, err := url.Parse(baseURL)
+
+	if err != nil {
+		return "", fmt.Errorf("could not parse url '%s'. %v", baseURL, err)
+	}
+
+	parsedURL.Path = fmt.Sprintf("/gitlab/%s", discordChannelID)
+	parsedURL.RawQuery = ""
+	parsedURL.Fragment = ""
+
+	return parsedURL.String(), nil
+}
