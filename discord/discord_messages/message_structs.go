@@ -1,16 +1,16 @@
 package discord_messages
 
 type commands struct {
-	Ping              			Ping              			`json:"ping"`
-	GetChannel        			GetChannel        			`json:"getChannel"`
-	ReloadLanguage    			ReloadLang        			`json:"reloadLang"`
-	ChangeLanguage    			ChangeLanguage    			`json:"changeLang"`
-	HelpCommand       			HelpCommand       			`json:"helpCommand"`
-	SetLanguagePrefix 			SetLanguagePrefix 			`json:"setPrefix"`
-	Language          			string            			`json:"language"`
-	NotificationMergeRequest 	NotificationMergeRequest 	`json:"notifyMR"`
-	Subscribe         			Subscribe         			`json:"subscribe"`
-	Unsubscribe       			Unsubscribe       			`json:"unSubscribe"`
+	Ping                     Ping                     `json:"ping"`
+	GetChannel               GetChannel               `json:"getChannel"`
+	ReloadLanguage           ReloadLang               `json:"reloadLang"`
+	ChangeLanguage           ChangeLanguage           `json:"changeLang"`
+	HelpCommand              HelpCommand              `json:"helpCommand"`
+	SetLanguagePrefix        SetLanguagePrefix        `json:"setPrefix"`
+	Language                 string                   `json:"language"`
+	NotificationMergeRequest NotificationMergeRequest `json:"notifyMR"`
+	Subscribe                Subscribe                `json:"subscribe"`
+	Unsubscribe              Unsubscribe              `json:"unSubscribe"`
 }
 
 type Ping struct {
@@ -54,9 +54,15 @@ type HelpCommand struct {
 }
 
 type Subscribe struct {
-	DatabaseAddFail string `json:"databaseAddFail"`
-	Successful      string `json:"successful"`
-	PathFormatError string `json:"pathFormatError"`
+	DatabaseAddFail              string `json:"databaseAddFail"`
+	Successful                   string `json:"successful"`
+	PathFormatError              string `json:"pathFormatError"`
+	TokenGenerationFail          string `json:"tokenGenerationFail"`
+	InvocationURLFail            string `json:"invocationURLFail"`
+	RepoIDFormatError            string `json:"repoIDFormatError"`
+	WebhookRegistrationError     string `json:"webhookRegistrationError"`
+	DatabaseAddSecurityTokenFail string `json:"databaseAddSecurityTokenFail"`
+	AccessTokenFail              string `json:"accessTokenFail"`
 }
 
 type Unsubscribe struct {

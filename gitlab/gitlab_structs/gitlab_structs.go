@@ -43,7 +43,7 @@ type Project struct {
 	// ID is the ID given to Gitlab project
 	ID int `json:"id"`
 
-	// AccessToken required for authentication
+	//  AccessToken required for authentication
 	AccessToken string `json:"access_token"`
 
 }

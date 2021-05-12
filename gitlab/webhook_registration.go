@@ -15,6 +15,14 @@ import (
 // anywhere, nor does it create some sort of webhook invocation handler. That
 // kind of functionality is up to the caller to implement.
 func (i Implementation) RegisterWebhook(project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error) {
+	//If webhook exists or there is an error
+	ok, err := i.DoesWebhookWithURLExist(project, webhook.Url)
+	if err != nil {
+		return gitlab_structs.WebhookRegistration{}, err
+	} else if ok {
+		return gitlab_structs.WebhookRegistration{}, fmt.Errorf("webhook is already registered. %v", err)
+	}
+
 	projectUrl, err := url.Parse(utils.HTTPS(project.URL))
 
 	if err != nil {

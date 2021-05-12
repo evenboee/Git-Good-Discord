@@ -41,9 +41,11 @@ func InjectAndInitializeServices () {
 
 	// Initialize dependencies
 	gitlabImplementation.AbstractionService = abstractionService
+	gitlabImplementation.DatabaseService = databaseService
 
 	discordImplementation.AbstractionService = abstractionService
 	discordImplementation.DatabaseService = databaseService
+	discordImplementation.GitlabService = gitlabService
 
 	abstractionImplementation.DiscordService = discordService
 	abstractionImplementation.GitlabService = gitlabService

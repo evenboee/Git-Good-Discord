@@ -98,7 +98,7 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 					return
 				}
 			case "subscribe":
-				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetSubscribe(i.DatabaseService, m, language)})
+				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetSubscribe(i.DatabaseService, i.GitlabService, m, language)})
 				if err != nil { return }
 			case "unsubscribe":
 				err := i.SendMessage(discord_structs.EmbeddedMessage{Message: discord_messages.GetUnsubscribe(i.DatabaseService, m, language)})

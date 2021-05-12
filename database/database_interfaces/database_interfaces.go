@@ -22,5 +22,13 @@ type DatabaseConnection interface {
 
 	SetChannelLanguage(channel_id string, language string) error
 
+	GetSecurityToken(channel_id string, gitlab_instance string, repo_id string) (string, error)
+
+	AddSecurityToken(channel_id string, gitlab_instance string, repo_id string, token string) error
+
+	AddAccessToken(channel_id string, gitlab_instance string, repo_id string, token string) error
+
+	GetAccessToken(channel_id string, gitlab_instance string, repo_id string) (string, error)
+
 	Close() error
 }

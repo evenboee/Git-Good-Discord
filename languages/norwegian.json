@@ -38,7 +38,13 @@
     "databaseAddFail": "Klarte ikke å abonnere",
     "successful": "Du er nå abbonert til {{0}} for {{1}}",
     "pathFormatError": "Ikke tydelig hva du vil abbonere på. Formatet bør være {instanse}/{repo_id}/{gitlab_username}",
-    "partsError": "Feil antall deler. Forventet 3, men fikk {{0}}"
+    "partsError": "Feil antall deler. Forventet 3, men fikk {{0}}",
+    "tokenGenerationFail": "Klarte ikke å generere en token",
+    "invocationURLFail": "Klarte ikke å hente webhook URL",
+    "repoIDFormatError": "Error: Repo ID er ikke et tall",
+    "webhookRegistrationError": "Klarte ikke å registrere webhooken",
+    "databaseAddSecurityTokenFail": "Klarte ikke å legge til sikkerhets token",
+    "accessTokenFail": "Klarte ikke å hente tilgangs token for prosjektet"
   },
   "unsubscribe": {
     "databaseRemoveFail": "Klarte ikke å avslutte abonnementet",

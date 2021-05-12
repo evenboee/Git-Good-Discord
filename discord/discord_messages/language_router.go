@@ -5,10 +5,12 @@ import (
 	"git-good-discord/database/database_interfaces"
 	"git-good-discord/database/database_structs"
 	"git-good-discord/discord/discord_structs"
+	"git-good-discord/gitlab/gitlab_interfaces"
 	"git-good-discord/gitlab/gitlab_structs"
 	"git-good-discord/utils"
 	"github.com/bwmarrin/discordgo"
 	"log"
+	"strconv"
 	"strings"
 )
 
@@ -243,8 +245,12 @@ func GetHelp(s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefi
 	}
 }
 
-func GetSubscribe(db database_interfaces.Database, m *discordgo.MessageCreate, language string) discord_structs.Message {
-	response := ""
+func GetSubscribe(db database_interfaces.Database, gitlab gitlab_interfaces.Interface, m *discordgo.MessageCreate, language string) discord_structs.Message {
+	response := discord_structs.Message{
+		ChannelID: m.ChannelID,
+		Message:   "",
+		Mentions:  []string{m.Author.Mention()},
+	}
 
 	var languagePack Subscribe
 	if v, ok := languageFiles[language]; ok {
@@ -277,24 +283,68 @@ func GetSubscribe(db database_interfaces.Database, m *discordgo.MessageCreate, l
 				}
 			}
 
-			err := db.GetConnection().AddSubscriber(m.ChannelID, instance, repoID, gitlabUsername, m.Author.ID, issues, merge_requests)
+			token, err := utils.GenerateUUID()
 			if err != nil {
-				response = languagePack.DatabaseAddFail
+				response.Message = languagePack.TokenGenerationFail
+				return response
+			}
+
+			url, err := gitlab.GetWebhookInvocationURL("https://"+instance, m.ChannelID)
+			if err != nil {
+				response.Message = languagePack.InvocationURLFail
+				return response
+			}
+
+			id, err := strconv.Atoi(repoID)
+			if err != nil {
+				response.Message = languagePack.RepoIDFormatError
+				return response
+			}
+
+			accessToken, err := db.GetConnection().GetAccessToken(m.ChannelID, instance, repoID)
+			if err != nil {
+				response.Message = languagePack.AccessTokenFail
+				return response
+			}
+
+			project := gitlab_structs.Project{
+				URL:         instance,
+				ID:          id,
+				AccessToken: accessToken,
+			}
+			webhook := gitlab_structs.Webhook{
+				Url:                 url,
+				SecretToken:         token,
+				IssuesEvents:        true,
+				MergeRequestsEvents: true,
+			}
+
+			_, err = gitlab.RegisterWebhook(project, webhook)
+			if err != nil {
+				response.Message = languagePack.WebhookRegistrationError
+				return response
+			}
+
+			err = db.GetConnection().AddSecurityToken(m.ChannelID, instance, repoID, token)
+			if err != nil {
+				response.Message = languagePack.DatabaseAddSecurityTokenFail
+				return response
+			}
+
+			err = db.GetConnection().AddSubscriber(m.ChannelID, instance, repoID, gitlabUsername, m.Author.ID, issues, merge_requests)
+			if err != nil {
+				response.Message = languagePack.DatabaseAddFail
 			} else {
-				response = placeholderHandler(languagePack.Successful, parts[1], strings.Join(newSubscriptions, ","))
+				response.Message = placeholderHandler(languagePack.Successful, parts[1], strings.Join(newSubscriptions, ","))
 			}
 		} else {
-			response = languagePack.PathFormatError
+			response.Message = languagePack.PathFormatError
 		}
 	} else {
-		response = placeholderHandler(languagePack.PathFormatError, fmt.Sprintf("%d", len(parts)))
+		response.Message = placeholderHandler(languagePack.PathFormatError, fmt.Sprintf("%d", len(parts)))
 	}
 
-	return discord_structs.Message{
-		ChannelID: m.ChannelID,
-		Message:   response,
-		Mentions:  []string{m.Author.Mention()},
-	}
+	return response
 }
 
 func GetUnsubscribe(db database_interfaces.Database, m *discordgo.MessageCreate, language string) discord_structs.Message {
