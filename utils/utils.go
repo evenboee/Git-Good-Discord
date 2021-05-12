@@ -1,5 +1,7 @@
 package utils
 
+import "strings"
+
 // ConvertToUniqueIntSlice will remove duplicates from a given int slice
 func ConvertToUniqueIntSlice(intSlice []int) []int {
 	keys := make(map[int]bool, len(intSlice))
@@ -13,4 +15,16 @@ func ConvertToUniqueIntSlice(intSlice []int) []int {
 	}
 
 	return list
+}
+
+func HTTPS(URL string, notSecure ...bool) string {
+	if strings.HasPrefix(strings.ToLower(URL), "http") {
+		return URL
+	}
+	if len(notSecure) > 0 {
+		if notSecure[0] {
+			return "http://" + URL
+		}
+	}
+	return "https://" + URL
 }

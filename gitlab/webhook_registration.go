@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"git-good-discord/gitlab/gitlab_structs"
+	"git-good-discord/utils"
 	"net/http"
 	"net/url"
 )
@@ -13,8 +14,8 @@ import (
 // return Registration information. This function does not store the registration
 // anywhere, nor does it create some sort of webhook invocation handler. That
 // kind of functionality is up to the caller to implement.
-func (i Implementation) RegisterWebhook (project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error) {
-	projectUrl, err := url.Parse(project.URL)
+func (i Implementation) RegisterWebhook(project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error) {
+	projectUrl, err := url.Parse(utils.HTTPS(project.URL))
 
 	if err != nil {
 		return gitlab_structs.WebhookRegistration{}, fmt.Errorf("could not parse project url. %v", err)
@@ -63,11 +64,16 @@ func (i Implementation) RegisterWebhook (project gitlab_structs.Project, webhook
 	return webhookRegistration, nil
 }
 
-func (i Implementation) GetWebhookInvocationURL (baseURL string, discordChannelID string) (string, error) {
-	parsedURL, err := url.Parse(baseURL)
+func (i Implementation) GetWebhookInvocationURL(discordChannelID string) (string, error) {
+	ip, err := utils.GetIP()
+	if err != nil {
+		return "", err
+	}
+	ip = utils.HTTPS(ip, true)
+	parsedURL, err := url.Parse(ip)
 
 	if err != nil {
-		return "", fmt.Errorf("could not parse url '%s'. %v", baseURL, err)
+		return "", fmt.Errorf("could not parse url '%s'. %v", ip, err)
 	}
 
 	parsedURL.Path = fmt.Sprintf("/gitlab/%s", discordChannelID)

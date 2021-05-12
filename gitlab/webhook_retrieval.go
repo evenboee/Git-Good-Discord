@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"git-good-discord/gitlab/gitlab_structs"
+	"git-good-discord/utils"
 	"net/http"
 	"net/url"
 )
 
 func (i Implementation) GetRegisteredWebhooks (project gitlab_structs.Project) ([]gitlab_structs.WebhookRegistration, error) {
-	projectUrl, err := url.Parse(project.URL)
+	projectUrl, err := url.Parse(utils.HTTPS(project.URL))
 
 	if err != nil {
 		return nil, fmt.Errorf("could not parse project url. %v", err)
@@ -48,7 +49,7 @@ func (i Implementation) GetRegisteredWebhooks (project gitlab_structs.Project) (
 }
 
 func (i Implementation) DoesWebhookWithURLExist (project gitlab_structs.Project, invocationURL string) (bool, error) {
-	parsedInvocationURL, err := url.Parse(invocationURL)
+	parsedInvocationURL, err := url.Parse(utils.HTTPS(invocationURL))
 
 	if err != nil {
 		return false, fmt.Errorf("could not parse invocation URL '%s'. %v", invocationURL, err)

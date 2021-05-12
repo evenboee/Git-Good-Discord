@@ -6,6 +6,7 @@ import (
 	"git-good-discord/database/database_structs"
 	"git-good-discord/discord/discord_structs"
 	"git-good-discord/gitlab/gitlab_structs"
+	"git-good-discord/utils"
 	"github.com/bwmarrin/discordgo"
 	"log"
 	"strings"
@@ -341,7 +342,7 @@ func NotifySubscribersOfMergeRequest(discordChannelID string, subscribers []data
 		mentions = append(mentions, discordMention(discordUser))
 	}
 
-	authorURL := "https://" + strings.Split(notification.Project.URL, "/")[2] + "/" + notification.User.Username
+	authorURL := utils.HTTPS(notification.Project.URL + "/" + notification.User.Username)
 
 	return discord_structs.EmbeddedMessage{
 		Message: discord_structs.Message{

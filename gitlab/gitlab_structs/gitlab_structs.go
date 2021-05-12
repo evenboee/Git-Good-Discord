@@ -3,7 +3,7 @@ package gitlab_structs
 // Webhook is a Webhook that can be registered with Gitlab Projects
 type Webhook struct {
 
-	// Url is the invocation URL of the webhook
+	// Url is the invocation InstanceURL of the webhook
 	Url string `json:"url"`
 
 	// Secret token to validate received payloads
@@ -37,7 +37,7 @@ type WebhookRegistration struct {
 // Project refers to a unique Gitlab Project
 type Project struct {
 
-	// URL to Gitlab project
+	// URL to Gitlab project https://git.gvk.idi.ntnu.no
 	URL string `json:"web_url"`
 
 	// ID is the ID given to Gitlab project

@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func (i Implementation) GetUserByUsername (instanceURL string, username string) (gitlab_structs.User, error) {
+func (i Implementation) GetUserByUsername(instanceURL string, username string) (gitlab_structs.User, error) {
 	parsedURL, err := url.Parse(instanceURL)
 
 	if err != nil {

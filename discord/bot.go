@@ -119,6 +119,8 @@ func getMessageHandler(i Implementation) func (s *discordgo.Session, m *discordg
 					return
 				}
 			case "help":
+				//Call abstact function
+				//Then send result to send message
 				err := i.SendMessage(discord_messages.GetHelp(s, m, prefix))
 				if err != nil {
 					return

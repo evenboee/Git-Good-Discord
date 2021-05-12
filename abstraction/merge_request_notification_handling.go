@@ -12,7 +12,7 @@ import (
 )
 
 func (i Implementation) HandleGitlabMergeRequestNotification(notification gitlab_structs.MergeRequestWebhookNotification, discordChannelID string) {
-	parsedURL, err := url.Parse(notification.Project.URL)
+	parsedURL, err := url.Parse(utils.HTTPS(notification.Project.URL))
 
 	if err != nil {
 		log.Printf("could not parse project url when handling merge request notification. %v", err)

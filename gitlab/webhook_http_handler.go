@@ -20,6 +20,10 @@ func (i Implementation) HandleWebhookNotificationHTTP(w http.ResponseWriter, req
 		return fmt.Errorf("not enough path separators (/) to get discord channel id from url path '%s'", req.URL.Path)
 	}
 
+	// Assumes that index 2 is discord Channel ID
+	// Follows format '/gitlab/{:discord_channel_id}'
+	discordChannelID := pathSplit[2]
+
 	// Get secret token from header
 	secretToken := req.Header.Get("X-Gitlab-Token")
 
@@ -27,10 +31,6 @@ func (i Implementation) HandleWebhookNotificationHTTP(w http.ResponseWriter, req
 	if secretToken != "Very secure token" {
 		return fmt.Errorf("wrong secret token provided in request: '%s'", secretToken)
 	}
-
-	// Assumes that index 2 is discord Channel ID
-	// Follows format '/gitlab/{:discord_channel_id}'
-	discordChannelID := pathSplit[2]
 
 	// Originally, I thought using json.NewDecoder(req.Body) would be cleaner
 	// Unfortunately, due to the way Gitlab notifications are structured (different

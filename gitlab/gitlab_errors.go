@@ -15,7 +15,7 @@ func tryToParseErrorResponse(responseBody io.Reader) gitlab_structs.ErrorRespons
 
 	// Initialize response error for when parsing fails
 	// This will be overridden if parsing succeeds
-	errorResponse := gitlab_structs.ErrorResponse{ Message: "unknown error response given by gitlab" }
+	errorResponse := gitlab_structs.ErrorResponse{Message: "unknown error response given by gitlab"}
 
 	if err != nil {
 		return errorResponse
