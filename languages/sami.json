@@ -1,0 +1,62 @@
+{
+  "language": "sami",
+  "ping": {
+    "errorGettingRoles": "Error: Ii nagodan fidnet rollaid",
+    "roleNotFound": "Mii eat gávdnan rolla {{0}}"
+  },
+  "getChannel": {
+    "notSpecified": "Čilge main don háliidat viežžat!",
+    "notRecognized": "Ii nagodan dovdat {{0}}"
+  },
+
+  "reloadLang": {
+    "errorReloading": "Mis leat váttisvuohta viežžat giellapáhkaid ođđasit",
+    "successfullyReloaded": "Mii leat dál viežžan giellapáhkaid ođđasit"
+  },
+  "changeLang": {
+    "noParam": "Muital makkár giela don sávat",
+    "invalidLang": "Giela don válljejit ii leat almmus",
+    "successful": "Giella lea rievdan {{0}}",
+    "databaseSetFail": "Ii nagodan bidjat giela",
+    "notAuthorized": "Dus ii leat autoritehta rievdat giela"
+  },
+  "setPrefix": {
+    "notAuthorized": "Dus ii leat autoritehta rievdat prefiksa",
+    "successful": "Prefiks lea rievdan {{0}}"
+  },
+  "helpCommand": {
+    "get": "Máhcahahttá channel ID",
+    "ping": "Tagge joavkku",
+    "reload": "Viežžá giellapáhkaid ođđasit",
+    "language": "Rievdada giela",
+    "help": "Čájeha dán menya",
+    "adminOnly": "(Beare Admin)",
+    "setPrefix": "Bidjá prefiksa gohččumii",
+    "subscribe": "Abonnere prošeaktadoaimmaide ovtta geavaheaddjái",
+    "unsubscribe": "Heaittit abonnerema prošeaktadoaimmaide ovtta geavaheaddjái"
+  },
+  "subscribe": {
+    "databaseAddFail": "Ii nagodan abonneret",
+    "successful": "Don leat dál abonneren {{0}} {{1}} ovddas",
+    "pathFormatError": "Ii leat čielggas masa don hállidat abonneret. Formáhta berreši leahkit {instanse}/{repo_id}/{gitlab_username}",
+    "partsError": "Boastu oasselohku. Meroštalaimet 3, muhto oaččuimet {{0}}",
+    "tokenGenerationFail": "Ii nagodan ráhkadit tokena",
+    "invocationURLFail": "Ii nagodan viežžat webhook URL",
+    "repoIDFormatError": "Error: Repo ID ii leat lohku",
+    "webhookRegistrationError": "Ii nagodan čálihit webhooka",
+    "databaseAddSecurityTokenFail": "Ii nagodan lasihit dorvvolašvuođa-tokena",
+    "accessTokenFail": "Ii nagodan viezzat beassan-tokena dán prošeavtta ovddas"
+  },
+  "unsubscribe": {
+    "databaseRemoveFail": "Ii nagodan haittihit abonnementta",
+    "successful": "Abonnemeanta {{0}} lea heaittihuvvon",
+    "pathFormatError": "Ii čielggas makkár abonnemeantta don háliidat heaittihit. Formáhta berreši leahkit {instanse}/{repo_id}/{gitlab_username}",
+    "partsError": "Boastu oasselohku. Meroštalaimet 2, muhto oaččuimet {{0}}"
+  },
+  "notifyMR":{
+    "success": "Lea boahtán ođđa merge requesta {{0}}, guovlla!"
+  },
+  "notifyIssue":{
+    "success": "Lea boahtán ođđa issue {{0}}, guovlla!"
+  }
+}
