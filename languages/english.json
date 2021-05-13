@@ -55,5 +55,8 @@
   },
   "notifyMR": {
     "success": "There is a new merge request by {{0}}, take a look!"
+  },
+  "notifyIssue": {
+    "success": "There is a new issue by {{0}}, take a look!"
   }
 }

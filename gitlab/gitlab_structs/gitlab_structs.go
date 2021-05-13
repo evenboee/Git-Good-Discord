@@ -64,6 +64,8 @@ type User struct {
 	Email string `json:"email"`
 }
 
+// ObjectAttributes Shared attributes for all webhooks. Some variables may not be
+// set depending on what type of webhook it belongs to
 type ObjectAttributes struct {
 	AssigneeID int `json:"assignee_id"`
 	AuthorID int `json:"author_id"`
@@ -76,13 +78,10 @@ type ObjectAttributes struct {
 	URL string `json:"url"`
 }
 
-type WebhookNotificationObject struct {
+// WebhookNotification contains data for a Gitlab webhook notification
+type WebhookNotification struct {
 	ObjectKind string `json:"object_kind"`
 	Project Project `json:"project"`
-}
-
-type MergeRequestWebhookNotification struct {
-	WebhookNotificationObject
 	User User `json:"user"`
 	ObjectAttributes ObjectAttributes `json:"object_attributes"`
 }

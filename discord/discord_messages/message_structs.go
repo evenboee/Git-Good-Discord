@@ -1,16 +1,17 @@
 package discord_messages
 
 type commands struct {
-	Ping                     Ping                     `json:"ping"`
-	GetChannel               GetChannel               `json:"getChannel"`
-	ReloadLanguage           ReloadLang               `json:"reloadLang"`
-	ChangeLanguage           ChangeLanguage           `json:"changeLang"`
-	HelpCommand              HelpCommand              `json:"helpCommand"`
-	SetLanguagePrefix        SetLanguagePrefix        `json:"setPrefix"`
-	Language                 string                   `json:"language"`
-	NotificationMergeRequest NotificationMergeRequest `json:"notifyMR"`
-	Subscribe                Subscribe                `json:"subscribe"`
-	Unsubscribe              Unsubscribe              `json:"unSubscribe"`
+	Ping              			Ping              			`json:"ping"`
+	GetChannel        			GetChannel        			`json:"getChannel"`
+	ReloadLanguage    			ReloadLang        			`json:"reloadLang"`
+	ChangeLanguage    			ChangeLanguage    			`json:"changeLang"`
+	HelpCommand       			HelpCommand       			`json:"helpCommand"`
+	SetLanguagePrefix 			SetLanguagePrefix 			`json:"setPrefix"`
+	Language          			string            			`json:"language"`
+	NotificationMergeRequest 	NotificationMergeRequest 	`json:"notifyMR"`
+	NotificationIssue 			NotificationIssue 			`json:"notifyIssue"`
+	Subscribe         			Subscribe         			`json:"subscribe"`
+	Unsubscribe       			Unsubscribe       			`json:"unSubscribe"`
 }
 
 type Ping struct {
@@ -73,5 +74,9 @@ type Unsubscribe struct {
 }
 
 type NotificationMergeRequest struct {
+	Success string `json:"success"`
+}
+
+type NotificationIssue struct {
 	Success string `json:"success"`
 }

@@ -289,7 +289,7 @@ func GetSubscribe(db database_interfaces.Database, gitlab gitlab_interfaces.Inte
 				return response
 			}
 
-			url, err := gitlab.GetWebhookInvocationURL("https://"+instance, m.ChannelID)
+			url, err := gitlab.GetWebhookInvocationURL(m.ChannelID)
 			if err != nil {
 				response.Message = languagePack.InvocationURLFail
 				return response
@@ -384,8 +384,7 @@ func GetUnsubscribe(db database_interfaces.Database, m *discordgo.MessageCreate,
 	}
 }
 
-func NotifySubscribersOfMergeRequest(discordChannelID string, subscribers []database_structs.Subscriber, notification gitlab_structs.MergeRequestWebhookNotification) discord_structs.EmbeddedMessage {
-	notificationMergeRequestLanguage := currentLanguagePack.NotificationMergeRequest
+func NotifySubscribers(discordChannelID string, subscribers []database_structs.Subscriber, notification gitlab_structs.WebhookNotification) discord_structs.EmbeddedMessage {
 	mentions := make([]string, 1, 1)
 	for _, subscriber := range subscribers {
 		discordUser := &discordgo.User{ID: subscriber.DiscordUserId}
@@ -397,7 +396,7 @@ func NotifySubscribersOfMergeRequest(discordChannelID string, subscribers []data
 	return discord_structs.EmbeddedMessage{
 		Message: discord_structs.Message{
 			ChannelID: discordChannelID,
-			Message:   placeholderHandler(notificationMergeRequestLanguage.Success, notification.User.Name),
+			Message:   getWebhookNotificationMessage(notification),
 			Mentions:  mentions,
 		},
 		MessageEmbed: discordgo.MessageEmbed{
@@ -416,4 +415,16 @@ func NotifySubscribersOfMergeRequest(discordChannelID string, subscribers []data
 			},
 		},
 	}
+}
+
+func getWebhookNotificationMessage (notification gitlab_structs.WebhookNotification) string {
+	switch notification.ObjectKind {
+	case gitlab_interfaces.NotificationMergeRequest:
+		return placeholderHandler(currentLanguagePack.NotificationMergeRequest.Success, notification.User.Name)
+	case gitlab_interfaces.NotificationIssue:
+		return placeholderHandler(currentLanguagePack.NotificationIssue.Success, notification.User.Name)
+	}
+
+	log.Printf("Unexpected notification type '%s'", notification.ObjectKind)
+	return "Oopsie, Something went wrong!"
 }

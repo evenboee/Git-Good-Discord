@@ -54,5 +54,8 @@
   },
   "notifyMR":{
     "success": "Det har kommet en ny merge request fra {{0}}, ta en titt!"
+  },
+  "notifyIssue":{
+    "success": "Det har kommet en ny issue fra {{0}}, ta en titt!"
   }
 }

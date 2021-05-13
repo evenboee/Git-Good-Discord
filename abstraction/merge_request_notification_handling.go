@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func (i Implementation) HandleGitlabMergeRequestNotification(notification gitlab_structs.MergeRequestWebhookNotification, discordChannelID string) {
+func (i Implementation) HandleGitlabNotification(notification gitlab_structs.WebhookNotification, discordChannelID string) {
 	parsedURL, err := url.Parse(utils.HTTPS(notification.Project.URL))
 
 	if err != nil {
@@ -37,7 +37,7 @@ func (i Implementation) HandleGitlabMergeRequestNotification(notification gitlab
 	interestedSubscribers := getInterestedSubscribers(&uniqueUsernames, i, gitlabInstance, discordChannelID, strconv.Itoa(repoID))
 
 	// Send message to notify subscribers
-	i.DiscordService.SendMessage(discord_messages.NotifySubscribersOfMergeRequest(discordChannelID, interestedSubscribers, notification))
+	i.DiscordService.SendMessage(discord_messages.NotifySubscribers(discordChannelID, interestedSubscribers, notification))
 }
 
 func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementation, gitlabInstance, discordChannelID string, repoID string) []database_structs.Subscriber {
