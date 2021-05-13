@@ -12,6 +12,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var currentLanguagePack commands
@@ -321,14 +322,16 @@ func GetSubscribe(db database_interfaces.Database, gitlab gitlab_interfaces.Inte
 
 			_, err = gitlab.RegisterWebhook(project, webhook)
 			if err != nil {
-				response.Message = languagePack.WebhookRegistrationError
-				return response
-			}
-
-			err = db.GetConnection().AddSecurityToken(m.ChannelID, instance, repoID, token)
-			if err != nil {
-				response.Message = languagePack.DatabaseAddSecurityTokenFail
-				return response
+				if !strings.Contains(err.Error(), "webhook is already registered") {
+					response.Message = languagePack.WebhookRegistrationError
+					return response
+				}
+			} else {
+				err = db.GetConnection().AddSecurityToken(m.ChannelID, instance, repoID, token)
+				if err != nil {
+					response.Message = languagePack.DatabaseAddSecurityTokenFail
+					return response
+				}
 			}
 
 			err = db.GetConnection().AddSubscriber(m.ChannelID, instance, repoID, gitlabUsername, m.Author.ID, issues, merge_requests)
@@ -393,18 +396,25 @@ func NotifySubscribers(discordChannelID string, subscribers []database_structs.S
 
 	authorURL := utils.HTTPS(notification.Project.URL + "/" + notification.User.Username)
 
+	timeStamp, err := time.Parse("2006-01-02T15:04:05Z", strings.Replace(strings.Replace(notification.ObjectAttributes.CreatedAt, " ", "T", -1), "TUTC", "Z", -1))
+
+	if err != nil {
+		timeStamp = time.Time{}
+	}
+
 	return discord_structs.EmbeddedMessage{
 		Message: discord_structs.Message{
 			ChannelID: discordChannelID,
 			Message:   getWebhookNotificationMessage(notification),
 			Mentions:  mentions,
 		},
+
 		MessageEmbed: discordgo.MessageEmbed{
 			URL:         notification.ObjectAttributes.URL,
 			Type:        discordgo.EmbedTypeLink,
 			Title:       notification.ObjectAttributes.Title,
 			Description: notification.ObjectAttributes.Description,
-			Timestamp:   notification.ObjectAttributes.CreatedAt,
+			Timestamp:   timeStamp.Format("2006-01-02T15:04:05-0700"),
 			Author: &discordgo.MessageEmbedAuthor{
 				URL:  authorURL,
 				Name: notification.User.Name,

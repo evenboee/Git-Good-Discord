@@ -18,6 +18,8 @@ var fs = http.FileServer(http.Dir("./static"))
 func (i Implementation) Start(errorChannel chan <- error) {
 	mux := http.NewServeMux()
 	mux.Handle("/", http.HandlerFunc(getRedirectionHandler(i)))
+
+	log.Println("HTTP Web Handler started")
 	err := http.ListenAndServe(":"+port, mux)
 	errorChannel <- err
 }
