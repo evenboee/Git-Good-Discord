@@ -1,0 +1,147 @@
+:root {
+    --discord: #7289da;
+
+    --nav-bg-color: #333;
+    --nav-color: #fff;
+    --nav-color-hover: var(--discord);
+    --nav-height: 7vh;
+    --nav-padding: 1em 1em 1em 1em;
+    --bg: #f1f1f1;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+}
+
+nav {
+    position: sticky;
+    width: 100vw;
+    top: 0;
+    background-color: var(--nav-bg-color);
+    color: var(--nav-color);
+    overflow: hidden;
+    height: calc(var(--nav-height) + var(--nav-padding));
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#headline {
+    text-align: center;
+    font-size: 3em;
+}
+
+nav #logo {
+    padding: var(--nav-padding);
+    height: var(--nav-height);
+}
+
+nav #logo img {
+    vertical-align: middle;
+    height: 100%;
+}
+
+nav #links {
+    line-height: var(--nav-height);
+    height: var(--nav-height);
+    padding: var(--nav-padding);
+}
+
+nav #links label {
+    font-size: calc(var(--nav-height) / 2);
+    text-decoration: none;
+    color: var(--nav-color);
+    margin-right: 1em;
+    transition: 50ms ease-in;
+
+    position: relative;
+    overflow: hidden;
+}
+
+nav #links label:hover {
+    color: var(--nav-color-hover);
+}
+
+main {
+    padding: 1em;
+}
+
+.headline {
+    font-size: 2em;
+    width: auto;
+}
+
+.headline span {
+    display: inline-block;
+    padding: 0 30px 0 5px;
+    border-bottom: solid 1px #000;
+}
+
+ol {
+    counter-reset: item;
+}
+
+ol li {
+    list-style-type: none;
+    display: block;
+}
+
+ol li::before {
+    content: counter(item) ". ";
+    counter-increment: item;
+    font-weight: bold;
+}
+
+.ib {
+    font-family: italic;
+    font-weight: bold;
+}
+
+a.ib {
+    color: #000;
+    text-decoration: underline 1px #000;
+}
+
+#links input[name="nav-links"] {
+    display: none;
+}
+
+input[name="nav-links"]:checked + label {
+    animation: nav-underline-in 150ms linear forwards;
+}
+
+@keyframes nav-underline-in {
+    10% {
+        border-bottom: solid 0 var(--nav-color-hover);;
+    }
+    to {
+        border-bottom: solid 4px var(--nav-color-hover);;
+    }
+}
+
+a {
+    text-decoration: none;
+    color: var(--discord);
+}
+
+main section *:not(h1, span) {
+    padding-left: 1em;
+}
+
+ul li {
+    display: block;
+}
+
+ul li {
+    list-style-type: none;
+}
+
+ul li::before {
+    content: "• ";
+}
+
+code {
+    background-color: #ddd;
+}

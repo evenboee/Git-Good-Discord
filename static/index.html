@@ -3,8 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <title>Git GOod Discord</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<h1>Git GOod Discord</h1>
+<nav>
+    <div id="logo">
+        <a href=""><img src="image2.jpg" alt="logo" /></a>
+    </div>
+    <div id="links">
+        <input type="radio" name="nav-links" id="nav-about" />
+        <label onclick="location.href='#about';" for="nav-about">About</label>
+
+        <input type="radio" name="nav-links" id="nav-setup" />
+        <label onclick="location.href='#setup';" for="nav-setup">Setup</label>
+
+        <input type="radio" name="nav-links" id="nav-usage" />
+        <label onclick="location.href='#usage';" for="nav-usage">Usage</label>
+    </div>
+</nav>
+<main>
+<h1 id="headline">Git GOod Discord</h1>
+<section id="about">
+    <h1 class="headline"><span>About</span></h1>
+    <p>
+        The idea was to create a discord bot that would allow users to subscribe to gitlab events.
+    </p>
+    <p>
+        Users can choose a gitlab user in a repository to subscribe to 
+    </p>
+    <p>
+        When that user is mentioned in an event; a message is sent to discord to notify the user.
+    </p>
+
+    <p>By:<br/>
+    <ul>
+        <li>Simen Bai (simenbai@stud.ntnu.no)</li>
+        <li>Ruben Christoffer Hegland-Antonsen (rubench@stud.ntnu.no)</li>
+        <li>Even Bryhn Bøe (evenbbo@stud.ntnu.no)</li>
+    </ul>
+    </p>
+</section>
+
+<section id="setup">
+    <h1 class="headline"><span>Setup</span></h1>
+    <ol>
+        <li>To authorize the bot for a sever go to <a href="https://discord.com/oauth2/authorize?client_id=841363181100204082&scope=bot">https://discord.com/oauth2/authorize?client_id=841363181100204082&scope=bot</a></li>
+        <li>Add the role <span class="ib">Admin</span> to the server. People with this role has acces to special commands. Be careful about giving this role to someone</li>
+    </ol>
+</section>
+
+<section id="usage">
+    <h1 class="headline"><span>Usage</span></h1>
+
+    <h3 id="default-settings">Default settings</h3>
+    <p>There are some default setting for each channel that can be changed later on.</p>
+    <ul>
+        <li>The default language is <span class="ib">english</span></li>
+        <li>The default command prefix is <span class="ib">!</span></li>
+    </ul>
+    <h3 id="discord-commands">Discord commands</h3>
+    <p>Assuming default command prefix (<span class="ib">!</span>)</p>
+    <h4 id="general-commands">General commands</h4>
+        <ul>
+            <li><code>!help</code> Lists commands</li>
+            <li><code>!subscibe &lt;gitlab_instance&gt;/&lt;repo_id&gt;/&lt;gitlab_username&gt; &lt;type1,type2&gt;</code> to subscribe to events<ul>
+            <li><span class="ib">type</span> is the type of event given as list e.g. issues,merge_requests or issues</li>
+            <li>e.g. <code>!subscribe git.gvk.idi.ntnu.no/1965/evenbbo1 issues,merge_requests</code></li>
+        </ul>
+    </li>
+    <li><code>!unsubscribe &lt;gitlab_instance&gt;/&lt;repo_id&gt;/&lt;gitlab_username&gt;</code> to unsubscribe from all events<ul>
+    <li>e.g. <code>!unsubscribe git.gvk.idi.ntnu.no/1965/evenbbo1</code></li>
+    </ul>
+    </li>
+    <li><code>!get &lt;item&gt;</code> to get information<ul>
+    <li><span class="ib">item</span> is what you want to get</li>
+    <li>e.g. <code>!get channel_id</code></li>
+    </ul>
+    </li>
+    <li><code>!ping &lt;role&gt;</code> ping a role<ul>
+    <li>e.g. <code>!ping admin</code></li>
+    </ul>
+    </li>
+    </ul>
+    <h4 id="admin-commands">Admin commands</h4>
+    <p>Commands requiring user to have the role <span class="ib">Admin</span></p>
+    <ul>
+    <li><code>!reload</code> to reload language packs. This is not usually needed but allows for changes in language packs without having to reboot the system.</li>
+    <li><code>!language &lt;language&gt;</code> to set language of channel<ul>
+    <li>e.g. <code>!language english</code></li>
+    </ul>
+    </li>
+    <li><code>!set prefix &lt;prefix&gt;</code> to set prefix of the channel<ul>
+    <li>e.g. <code>!set prefix #</code></li>
+    <li>Note: This command always requires the preifx <span class="ib">!</span>. This is in case the prefix is forgotten</li>
+    </ul>
+    </li>
+    </ul>
+</section>
+
+</main>
 </body>
 </html>
