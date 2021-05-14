@@ -64,5 +64,9 @@
     "pathElementEmpty": "Del {{0}} av stien kan ikke være tom",
     "addTokenFail": "Klarte ikke å legge til token",
     "successful": "Access token ble satt til {{0}}. Slett meldingen du sendte for sikkerhet"
+  },
+  "subscriptions": {
+    "databaseFail": "Klarte ikke å hente abbonomentene dine",
+    "successful": "Her er abbonomentene dine:\n{{0}}"
   }
 }

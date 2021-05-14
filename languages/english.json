@@ -65,5 +65,9 @@
     "pathElementEmpty": "Part {{0}} of path cannot be empty",
     "addTokenFail": "Failed to add token",
     "successful": "Access token set to {{0}}. Delete your message for security"
+  },
+  "subscriptions": {
+    "databaseFail": "Failed to get subscriptions",
+    "successful": "Here are your subscriptions:\n{{0}}"
   }
 }

@@ -36,6 +36,8 @@ func commandHandler(i Implementation, s *discordgo.Session, m *discordgo.Message
 		message = subscribeHandler(language, i.DatabaseService, i.GitlabService, m)
 	case "unsubscribe":
 		message = unsubscribeHandler(language, i.DatabaseService, m)
+	case "subscriptions":
+		message = getSubscriptions(language, i.DatabaseService, m)
 	case "reload":
 		message = reloadHandler(language, m)
 	case "language":
@@ -54,6 +56,25 @@ func commandHandler(i Implementation, s *discordgo.Session, m *discordgo.Message
 		log.Printf("Bot.go: %v\n", err)
 		return
 	}
+}
+
+func getSubscriptions(language string, db database_interfaces.Database, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	subscriptions, err := db.GetConnection().GetAllSubscriptions(m.ChannelID, m.Author.ID)
+	command := ""
+	message := ""
+	if err == nil {
+		for _, subscription := range subscriptions {
+			var events []string
+			if subscription.MergeRequests { events = append(events, "merge_requests") }
+			if subscription.Issues { events = append(events, "issues") }
+			message += fmt.Sprintf("- %s/%s/%s %s\n", subscription.Instance, subscription.RepoID, subscription.GitlabUsername, strings.Join(events, ","))
+		}
+		command = "Successful"
+	} else {
+		command = "DatabaseFail"
+	}
+
+	return discord_messages.GetSubscriptions(command, language, message, m)
 }
 
 func getSetAccessToken(language string, db database_interfaces.Database, s *discordgo.Session, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {

@@ -50,6 +50,9 @@ type DatabaseConnection interface {
 	// GetAccessToken will get the access token for the given gitlab project
 	GetAccessToken(channel_id string, gitlab_instance string, repo_id string) (string, error)
 
+	// GetAllSubscriptions gets all subscriptions of a user for a given channel
+	GetAllSubscriptions(channel_id string, discord_user_id string) ([]database_structs.Subscriber, error)
+
 	// Close will close the database connection
 	Close() error
 }

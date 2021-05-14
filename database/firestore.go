@@ -61,8 +61,13 @@ func (conn FirestoreConnection) AddSubscriber(channel_id string, gitlab_instance
 		return connectionNotOpenError
 	}
 	subscriber := database_structs.Subscriber{
-		Issues:        issues,
-		MergeRequests: merge_requests,
+		DiscordUserId:  discord_user_id,
+		ChannelID:      channel_id,
+		Instance:       gitlab_instance,
+		RepoID:         repo_id,
+		GitlabUsername: gitlab_username,
+		Issues:         issues,
+		MergeRequests:  merge_requests,
 	}
 	// Navigating to resource: channels/{channel_id}/instances/{gitlab_instance}/repos/{repo_id}/subscribers/{gitlab_username}/subscribers/{discord_user_id}/
 	collection := conn.client.Collection(Channels).Doc(channel_id).Collection(Instance).Doc(gitlab_instance).Collection(Repos).Doc(repo_id).Collection(Subscribers).Doc(gitlab_username).Collection(Subscribers)
@@ -117,6 +122,32 @@ func (conn FirestoreConnection) DeleteSubscriber(channel_id, gitlab_instance str
 	subscriber := conn.client.Collection(Channels).Doc(channel_id).Collection(Instance).Doc(gitlab_instance).Collection(Repos).Doc(repo_id).Collection(Subscribers).Doc(gitlab_username).Collection(Subscribers).Doc(discord_user_id)
 	_, err := subscriber.Delete(conn.ctx)
 	return err
+}
+
+func (conn FirestoreConnection) GetAllSubscriptions(channel_id string, discord_user_id string) ([]database_structs.Subscriber, error) {
+	var subscriptions []database_structs.Subscriber
+
+	if conn.open != true {
+		return subscriptions, connectionNotOpenError
+	}
+
+	iter := conn.client.CollectionGroup(Subscribers).Where("id", "==", discord_user_id).Where("channel_id", "==", channel_id).Documents(conn.ctx)
+	for {
+		doc, err := iter.Next()
+		if err != nil {
+			if err == iterator.Done { break }
+			return subscriptions, err
+		}
+
+		v, err := json.Marshal(doc.Data())
+		if err != nil { return subscriptions, err }
+		var subscriber database_structs.Subscriber
+		err = json.Unmarshal(v, &subscriber)
+		if err != nil { return subscriptions, err }
+
+		subscriptions = append(subscriptions, subscriber)
+	}
+	return subscriptions, nil
 }
 
 func (conn FirestoreConnection) Close() error {

@@ -55,6 +55,7 @@ func GetPing(language string, info []string, session *discordgo.Session, message
 	}
 }
 
+// GetSetAccessToken gets the message for the access_token command
 func GetSetAccessToken(command string, language string, newAccessToken string, expectedParts string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	languagePack := getLanguage(language).SetAccessToken
 	response := ""
@@ -76,6 +77,27 @@ func GetSetAccessToken(command string, language string, newAccessToken string, e
 			ChannelID: messageCreate.ChannelID,
 			Message:   response,
 			Mentions:  []string{messageCreate.Author.Mention()},
+		},
+		MessageEmbed: discordgo.MessageEmbed{},
+	}
+}
+
+// GetSubscriptions get the message for the subscriptions command
+func GetSubscriptions(command string, language string, subscriptions string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	languagePack := getLanguage(language).Subscriptions
+	response := ""
+	switch command {
+	case "DatabaseFail":
+		response = languagePack.DatabaseFail
+	case "Successful":
+		response = placeholderHandler(languagePack.Successful, subscriptions)
+	}
+
+	return discord_structs.EmbeddedMessage{
+		Message:      discord_structs.Message{
+			ChannelID: m.ChannelID,
+			Message:   response,
+			Mentions:  []string{m.Author.Mention()},
 		},
 		MessageEmbed: discordgo.MessageEmbed{},
 	}

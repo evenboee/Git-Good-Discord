@@ -15,6 +15,7 @@ type commands struct {
 	Unsubscribe       			Unsubscribe       			`json:"unSubscribe"`
 	Errors						Errors						`json:"errors"`
 	SetAccessToken              SetAccessToken              `json:"setAccessToken"`
+	Subscriptions               Subscriptions               `json:"subscriptions"`
 }
 
 // Ping contains Ping-related words
@@ -99,6 +100,7 @@ type Errors struct {
 	CommandNotRecognized string `json:"commandNotRecognized"`
 }
 
+// SetAccessToken contains messages related to setting the access token of a gitlab project
 type SetAccessToken struct {
 	NotAuthorized    string `json:"notAuthorized"`
 	WrongParts       string `json:"wrongParts"`
@@ -106,4 +108,9 @@ type SetAccessToken struct {
 	PathElementEmpty string `json:"pathElementEmpty"`
 	AddTokenFail     string `json:"addTokenFail"`
 	Successful       string `json:"successful"`
+}
+
+type Subscriptions struct {
+	DatabaseFail string `json:"databaseFail"`
+	Successful   string `json:"successful"`
 }
