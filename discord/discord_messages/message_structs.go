@@ -4,7 +4,7 @@ package discord_messages
 type commands struct {
 	Ping                     Ping                     `json:"ping"`
 	GetChannel               GetChannel               `json:"getChannel"`
-	ReloadLanguage           ReloadLang               `json:"reloadLang"`
+	ReloadLanguage           ReloadLanguage               `json:"reloadLang"`
 	ChangeLanguage           ChangeLanguage           `json:"changeLang"`
 	HelpCommand              HelpCommand              `json:"helpCommand"`
 	SetLanguagePrefix        SetLanguagePrefix        `json:"setPrefix"`
@@ -30,8 +30,8 @@ type GetChannel struct {
 	NotRecognized string `json:"notRecognized"`
 }
 
-// ReloadLang contains ReloadLang-related words
-type ReloadLang struct {
+// ReloadLanguage contains ReloadLanguage-related words
+type ReloadLanguage struct {
 	ErrorReloading       string `json:"errorReloading"`
 	SuccessfullyReloaded string `json:"successfullyReloaded"`
 	NotAuthorized        string `json:"notAuthorized"`
