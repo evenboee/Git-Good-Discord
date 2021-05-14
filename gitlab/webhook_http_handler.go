@@ -3,7 +3,6 @@ package gitlab
 import (
 	"encoding/json"
 	"fmt"
-	"git-good-discord/gitlab/gitlab_interfaces"
 	"git-good-discord/gitlab/gitlab_structs"
 	"log"
 	"net/http"
@@ -42,9 +41,9 @@ func (i Implementation) HandleWebhookNotificationHTTP(w http.ResponseWriter, req
 
 	// Check if unsupported notification type
 	switch notification.ObjectKind {
-	case gitlab_interfaces.NotificationMergeRequest:
+	case gitlab_structs.NotificationMergeRequest:
 		break
-	case gitlab_interfaces.NotificationIssue:
+	case gitlab_structs.NotificationIssue:
 		break
 	default:
 		return fmt.Errorf("received unsupported webhook notification type '%s'", notification.ObjectKind)

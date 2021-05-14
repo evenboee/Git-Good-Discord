@@ -1,60 +1,21 @@
 package discord_messages
 
 import (
-	"fmt"
-	"git-good-discord/database/database_interfaces"
 	"git-good-discord/database/database_structs"
 	"git-good-discord/discord/discord_structs"
-	"git-good-discord/gitlab/gitlab_interfaces"
 	"git-good-discord/gitlab/gitlab_structs"
 	"git-good-discord/utils"
 	"github.com/bwmarrin/discordgo"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 )
 
-var currentLanguagePack commands
-
-func GetGetChannel(messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.Message {
-	var getChannelLanguage GetChannel
-	if v, ok := languageFiles[language]; ok {
-		getChannelLanguage = v.GetChannel
-	} else {
-		getChannelLanguage = languageFiles["english"].GetChannel
-	}
-
-	_, info := splitMessage(messageCreate.Content, prefix)
-	response := ""
-	if len(info) == 0 {
-		response = getChannelLanguage.NotSpecified
-	} else {
-		if info[0] == "channel_id" {
-			response = "Channel_id: " + messageCreate.ChannelID
-		} else {
-			response = placeholderHandler(getChannelLanguage.NotRecognized, info[0])
-		}
-	}
-
-	return discord_structs.Message{
-		ChannelID: messageCreate.ChannelID,
-		Message:   response,
-		Mentions:  nil,
-	}
-}
-
-func GetPing(session *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.Message {
-	var pingLanguage Ping
-	if v, ok := languageFiles[language]; ok {
-		pingLanguage = v.Ping
-	} else {
-		pingLanguage = languageFiles["english"].Ping
-	}
+func GetPing(language string, info []string, session *discordgo.Session, messageCreate *discordgo.MessageCreate) discord_structs.Message {
+	pingLanguage := getLanguage(language).Ping
 
 	response := ""
 	mentions := make([]string, 0)
-	_, info := splitMessage(messageCreate.Content, prefix)
 
 	role := ""
 	if len(info) == 0 {
@@ -93,24 +54,12 @@ func GetPing(session *discordgo.Session, messageCreate *discordgo.MessageCreate,
 	}
 }
 
-func GetReloadLanguage(messageCreate *discordgo.MessageCreate, language string) discord_structs.EmbeddedMessage {
-	var reloadLanguage ReloadLang
-	if v, ok := languageFiles[language]; ok {
-		reloadLanguage = v.ReloadLanguage
-	} else {
-		reloadLanguage = languageFiles["english"].ReloadLanguage
-	}
+func GetReloadLanguage(language string, action string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	reloadLanguage := getLanguage(language).ReloadLanguage
 
-	response := ""
-
-	err := ReloadLanguageFiles()
-	if err != nil {
-		log.Print("Problem reloading language pack: ")
-		log.Println(err)
+	response := reloadLanguage.SuccessfullyReloaded
+	if action == "errorReloading" {
 		response = reloadLanguage.ErrorReloading
-	} else {
-		response = reloadLanguage.SuccessfullyReloaded
-		currentLanguagePack = languageFiles[currentLanguagePack.Language]
 	}
 
 	return discord_structs.EmbeddedMessage{
@@ -122,49 +71,19 @@ func GetReloadLanguage(messageCreate *discordgo.MessageCreate, language string) 
 	}
 }
 
-func GetChangeLanguage(db database_interfaces.Database, s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string, language string) discord_structs.EmbeddedMessage {
-	var changeLanguage ChangeLanguage
-	if v, ok := languageFiles[language]; ok {
-		changeLanguage = v.ChangeLanguage
-	} else {
-		changeLanguage = languageFiles["english"].ChangeLanguage
-	}
-
-	roles, err := s.GuildRoles(messageCreate.GuildID)
-	if err != nil {
-		return discord_structs.EmbeddedMessage{}
-	}
-
-	isAdmin := memberIsAdmin(messageCreate.Member, roles)
-
-	if !isAdmin {
-		return discord_structs.EmbeddedMessage{
-			Message: discord_structs.Message{
-				ChannelID: messageCreate.ChannelID,
-				Message:   changeLanguage.NotAuthorized,
-				Mentions:  []string{messageCreate.Author.Mention()},
-			},
-		}
-	}
-
+func GetChangeLanguage(command string, language string, newLanguage string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	languagePack := getLanguage(language).ChangeLanguage
 	response := ""
-	_, info := splitMessage(messageCreate.Content, prefix)
-	if len(info) == 0 {
-		response = changeLanguage.NoParam
-	} else {
-		nLanguage := strings.ToLower(info[0])
-		if languageFiles[nLanguage] == (commands{}) {
-			//Language is not available
-			response = placeholderHandler(changeLanguage.InvalidLanguage, nLanguage)
-		} else {
-			response = placeholderHandler(changeLanguage.Successful, nLanguage)
-			currentLanguagePack = languageFiles[nLanguage]
-
-			err := db.GetConnection().SetChannelLanguage(messageCreate.ChannelID, nLanguage)
-			if err != nil {
-				response = changeLanguage.DatabaseSetFail
-			}
-		}
+	switch command {
+	case "NoParam":
+		response = languagePack.NoParam
+	case "Invalid":
+		response = placeholderHandler(languagePack.InvalidLanguage, newLanguage)
+	case "DatabaseSetFail":
+		response = languagePack.DatabaseSetFail
+	case "Success":
+	default:
+		response = placeholderHandler(languagePack.Successful, newLanguage)
 	}
 
 	return discord_structs.EmbeddedMessage{
@@ -176,52 +95,43 @@ func GetChangeLanguage(db database_interfaces.Database, s *discordgo.Session, me
 	}
 }
 
-func SetPrefix(db database_interfaces.Database, s *discordgo.Session, m *discordgo.MessageCreate, nPrefix string, language string) discord_structs.Message {
-	var languagePack SetLanguagePrefix
-	if v, ok := languageFiles[language]; ok {
-		languagePack = v.SetLanguagePrefix
-	} else {
-		languagePack = languageFiles["english"].SetLanguagePrefix
+func NotAuthorizedMessage(language string, command string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	response := "You are not authorized to do this!"
+	if command == "ChangeLanguage" {
+		response = getLanguage(language).ChangeLanguage.NotAuthorized
+	} else if command == "SetPrefix" {
+		response = getLanguage(language).SetLanguagePrefix.NotAuthorized
 	}
 
-	roles, err := s.GuildRoles(m.GuildID)
-	if err != nil {
-		return discord_structs.Message{}
-	}
-
-	isAdmin := memberIsAdmin(m.Member, roles)
-
-	if !isAdmin {
-		return discord_structs.Message{
-			ChannelID: m.ChannelID,
-			Message:   languagePack.NotAuthorized,
-			Mentions:  []string{m.Author.Mention()},
-		}
-	}
-
-	err = db.GetConnection().SetChannelPrefix(m.ChannelID, nPrefix)
-	if err != nil {
-		return discord_structs.Message{
-			ChannelID: m.ChannelID,
-			Message:   languagePack.NotAuthorized,
-			Mentions:  []string{m.Author.Mention()},
-		}
-	}
-
-	return discord_structs.Message{
-		ChannelID: m.ChannelID,
-		Message:   placeholderHandler(languagePack.Successful, nPrefix),
-		Mentions:  []string{m.Author.Mention()},
+	return discord_structs.EmbeddedMessage{
+		Message: discord_structs.Message{
+			ChannelID: messageCreate.ChannelID,
+			Message:   response,
+			Mentions:  []string{messageCreate.Author.Mention()},
+		},
 	}
 }
 
-func GetHelp(s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefix string) discord_structs.EmbeddedMessage {
-	helpLanguage := currentLanguagePack.HelpCommand
-
-	roles, err := s.GuildRoles(messageCreate.GuildID)
-	if err != nil {
-		return discord_structs.EmbeddedMessage{}
+func SetPrefix(command string, prefix string, language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	languagePack := getLanguage(language).SetLanguagePrefix
+	response := ""
+	if command == "dbError" {
+		response = languagePack.NotAuthorized
+	} else {
+		response = placeholderHandler(languagePack.Successful, prefix)
 	}
+
+	return discord_structs.EmbeddedMessage{
+		Message: discord_structs.Message{
+			ChannelID: m.ChannelID,
+			Message:   response,
+			Mentions:  []string{m.Author.Mention()},
+		},
+	}
+}
+
+func GetHelp(prefix string, language string, isAdmin bool, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	helpLanguage := getLanguage(language).HelpCommand
 	response := "\n***Commands***\n> " +
 		prefix + "help - " + helpLanguage.Help + "\n> " +
 		prefix + "subscribe <instance>/<repo_id>/<gitlab_username> <type1,type2,...> - " + helpLanguage.Subscribe + "\n> " +
@@ -229,7 +139,7 @@ func GetHelp(s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefi
 		prefix + "get <channel-name> - " + helpLanguage.Get + "\n> " +
 		prefix + "ping <group> - " + helpLanguage.Ping + "\n"
 
-	if memberIsAdmin(messageCreate.Member, roles) {
+	if isAdmin {
 		response += "\n" +
 			"***Admin commands***\n> " +
 			prefix + "reload - " + helpLanguage.Reload + " " + helpLanguage.AdminOnly + "\n> " +
@@ -246,149 +156,66 @@ func GetHelp(s *discordgo.Session, messageCreate *discordgo.MessageCreate, prefi
 	}
 }
 
-func GetSubscribe(db database_interfaces.Database, gitlab gitlab_interfaces.Interface, m *discordgo.MessageCreate, language string) discord_structs.Message {
-	response := discord_structs.Message{
-		ChannelID: m.ChannelID,
-		Message:   "",
-		Mentions:  []string{m.Author.Mention()},
+func GetSubscribe(command string, variable string, variable2 string, language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	languagePack := getLanguage(language).Subscribe
+	response := ""
+	switch command {
+	case "PathFormatError":
+		response = languagePack.PathFormatError
+	case "TokenGenerationFail":
+		response = languagePack.TokenGenerationFail
+	case "InvocationURLFail":
+		response = languagePack.InvocationURLFail
+	case "RepoIDFormatError":
+		response = languagePack.RepoIDFormatError
+	case "AccessTokenFail":
+		response = languagePack.AccessTokenFail
+	case "WebhookRegistrationError":
+		response = languagePack.WebhookRegistrationError
+	case "DatabaseAddSecurityTokenFail":
+		response = languagePack.DatabaseAddSecurityTokenFail
+	case "DatabaseAddFail":
+		response = languagePack.DatabaseAddFail
+	case "Successful":
+		response = placeholderHandler(languagePack.Successful, variable, variable2)
+	}
+	return discord_structs.EmbeddedMessage{
+		Message: discord_structs.Message{
+			ChannelID: m.ChannelID,
+			Message:   response,
+			Mentions:  []string{m.Author.Mention()},
+		},
 	}
 
-	var languagePack Subscribe
-	if v, ok := languageFiles[language]; ok {
-		languagePack = v.Subscribe
-	} else {
-		languagePack = languageFiles["english"].Subscribe
-	}
-
-	parts := strings.Split(m.Content, " ")
-	if len(parts) == 3 {
-		path := strings.Split(parts[1], "/")
-		if len(path) == 3 {
-			instance := path[0]
-			repoID := path[1]
-			gitlabUsername := path[2]
-
-			issues := false
-			merge_requests := false
-
-			subscriptions := strings.Split(parts[2], ",")
-			var newSubscriptions []string
-			for _, v := range subscriptions {
-				switch v {
-				case "issues":
-					issues = true
-					newSubscriptions = append(newSubscriptions, "issues")
-				case "merge_requests":
-					merge_requests = true
-					newSubscriptions = append(newSubscriptions, "merge_requests")
-				}
-			}
-
-			token, err := utils.GenerateUUID()
-			if err != nil {
-				response.Message = languagePack.TokenGenerationFail
-				return response
-			}
-
-			url, err := gitlab.GetWebhookInvocationURL(m.ChannelID)
-			if err != nil {
-				response.Message = languagePack.InvocationURLFail
-				return response
-			}
-
-			id, err := strconv.Atoi(repoID)
-			if err != nil {
-				response.Message = languagePack.RepoIDFormatError
-				return response
-			}
-
-			accessToken, err := db.GetConnection().GetAccessToken(m.ChannelID, instance, repoID)
-			if err != nil {
-				response.Message = languagePack.AccessTokenFail
-				return response
-			}
-
-			project := gitlab_structs.Project{
-				URL:         instance,
-				ID:          id,
-				AccessToken: accessToken,
-			}
-			webhook := gitlab_structs.Webhook{
-				Url:                 url,
-				SecretToken:         token,
-				IssuesEvents:        true,
-				MergeRequestsEvents: true,
-			}
-
-			_, err = gitlab.RegisterWebhook(project, webhook)
-			if err != nil {
-				if !strings.Contains(err.Error(), "webhook is already registered") {
-					response.Message = languagePack.WebhookRegistrationError
-					return response
-				}
-			} else {
-				err = db.GetConnection().AddSecurityToken(m.ChannelID, instance, repoID, token)
-				if err != nil {
-					response.Message = languagePack.DatabaseAddSecurityTokenFail
-					return response
-				}
-			}
-
-			err = db.GetConnection().AddSubscriber(m.ChannelID, instance, repoID, gitlabUsername, m.Author.ID, issues, merge_requests)
-			if err != nil {
-				response.Message = languagePack.DatabaseAddFail
-			} else {
-				response.Message = placeholderHandler(languagePack.Successful, parts[1], strings.Join(newSubscriptions, ","))
-			}
-		} else {
-			response.Message = languagePack.PathFormatError
-		}
-	} else {
-		response.Message = placeholderHandler(languagePack.PathFormatError, fmt.Sprintf("%d", len(parts)))
-	}
-
-	return response
 }
 
-func GetUnsubscribe(db database_interfaces.Database, m *discordgo.MessageCreate, language string) discord_structs.Message {
-	// Unsubscribe = delete subscriber
+func GetUnsubscribe(language string, command string, variable string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	languagePack := getLanguage(language).Unsubscribe
 	response := ""
 
-	var languagePack Unsubscribe
-	if v, ok := languageFiles[language]; ok {
-		languagePack = v.Unsubscribe
-	} else {
-		languagePack = languageFiles["english"].Unsubscribe
+	switch command {
+	case "PartsError":
+		response = placeholderHandler(languagePack.PartsError, variable)
+	case "PathFormatError":
+		response = languagePack.PathFormatError
+	case "DatabaseRemoveFail":
+		response = languagePack.DatabaseRemoveFail
+	case "Successful":
+	default:
+		response = placeholderHandler(languagePack.Successful, variable)
 	}
 
-	parts := strings.Split(m.Content, " ")
-	if len(parts) == 2 {
-		path := strings.Split(parts[1], "/")
-		if len(path) == 3 {
-			instance := path[0]
-			repoID := path[1]
-			gitlabUsername := path[2]
-			err := db.GetConnection().DeleteSubscriber(m.ChannelID, instance, repoID, gitlabUsername, m.Author.ID)
-			if err != nil {
-				response = languagePack.DatabaseRemoveFail
-			}
-			response = placeholderHandler(languagePack.Successful, parts[1])
-		} else {
-			response = languagePack.PathFormatError
-		}
-	} else {
-		response = placeholderHandler(languagePack.PartsError, fmt.Sprintf("%d", len(parts)))
-	}
-
-	return discord_structs.Message{
-		ChannelID: m.ChannelID,
-		Message:   response,
-		Mentions:  []string{m.Author.Mention()},
+	return discord_structs.EmbeddedMessage{
+		Message: discord_structs.Message{
+			ChannelID: m.ChannelID,
+			Message:   response,
+			Mentions:  []string{m.Author.Mention()},
+		},
 	}
 }
 
-func NotifySubscribers(discordChannelID string, subscribers []database_structs.Subscriber, notification gitlab_structs.WebhookNotification) discord_structs.EmbeddedMessage {
-	mentions := make([]string, 1, 1)
+func NotifySubscribers(language string, discordChannelID string, subscribers []database_structs.Subscriber, notification gitlab_structs.WebhookNotification) discord_structs.EmbeddedMessage {
+	mentions := make([]string, 1)
 	for _, subscriber := range subscribers {
 		discordUser := &discordgo.User{ID: subscriber.DiscordUserId}
 		mentions = append(mentions, discordMention(discordUser))
@@ -396,7 +223,7 @@ func NotifySubscribers(discordChannelID string, subscribers []database_structs.S
 
 	authorURL := utils.HTTPS(notification.Project.URL + "/" + notification.User.Username)
 
-	timeStamp, err := time.Parse("2006-01-02T15:04:05Z", strings.Replace(strings.Replace(notification.ObjectAttributes.CreatedAt, " ", "T", -1), "TUTC", "Z", -1))
+	timeStamp, err := time.Parse("2006-01-02T15:04:05Z", strings.ReplaceAll(strings.Replace(notification.ObjectAttributes.CreatedAt, " ", "T", -1), "TUTC", "Z"))
 
 	if err != nil {
 		timeStamp = time.Time{}
@@ -405,7 +232,7 @@ func NotifySubscribers(discordChannelID string, subscribers []database_structs.S
 	return discord_structs.EmbeddedMessage{
 		Message: discord_structs.Message{
 			ChannelID: discordChannelID,
-			Message:   getWebhookNotificationMessage(notification),
+			Message:   getWebhookNotificationMessage(language, notification),
 			Mentions:  mentions,
 		},
 
@@ -427,12 +254,12 @@ func NotifySubscribers(discordChannelID string, subscribers []database_structs.S
 	}
 }
 
-func getWebhookNotificationMessage (notification gitlab_structs.WebhookNotification) string {
+func getWebhookNotificationMessage(language string, notification gitlab_structs.WebhookNotification) string {
 	switch notification.ObjectKind {
-	case gitlab_interfaces.NotificationMergeRequest:
-		return placeholderHandler(currentLanguagePack.NotificationMergeRequest.Success, notification.User.Name)
-	case gitlab_interfaces.NotificationIssue:
-		return placeholderHandler(currentLanguagePack.NotificationIssue.Success, notification.User.Name)
+	case gitlab_structs.NotificationMergeRequest:
+		return placeholderHandler(getLanguage(language).NotificationMergeRequest.Success, notification.User.Name)
+	case gitlab_structs.NotificationIssue:
+		return placeholderHandler(getLanguage(language).NotificationIssue.Success, notification.User.Name)
 	}
 
 	log.Printf("Unexpected notification type '%s'", notification.ObjectKind)

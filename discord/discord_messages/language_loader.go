@@ -69,7 +69,6 @@ func LoadLanguageFiles(errorChan chan error) {
 	if err != nil {
 		errorChan <- err
 	}
-	currentLanguagePack = languageFiles["english"]
 }
 
 func getLanguageFiles() (map[string]commands, error) {
@@ -91,4 +90,20 @@ func parseLanguageFile(languageFileName string) (commands, error) {
 	var language commands
 	err := utils.FileToInterface(languageFileName, &language)
 	return language, err
+}
+
+func getLanguage(language string) commands {
+	if lang, ok := languageFiles[language]; ok {
+		return lang
+	}
+	return languageFiles["english"]
+}
+
+func IsLanguage(language string) bool {
+	if language != "english" {
+		if _, ok := languageFiles[language]; !ok {
+			return false
+		}
+	}
+	return true
 }

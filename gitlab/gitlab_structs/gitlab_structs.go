@@ -1,5 +1,11 @@
 package gitlab_structs
 
+// NotificationMergeRequest Gitlab Merge Request Notification
+const NotificationMergeRequest = "merge_request"
+
+// NotificationIssue Gitlab Issue Notification
+const NotificationIssue = "issue"
+
 // Webhook is a Webhook that can be registered with Gitlab Projects
 type Webhook struct {
 

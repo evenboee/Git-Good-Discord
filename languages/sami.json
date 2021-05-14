@@ -4,11 +4,6 @@
     "errorGettingRoles": "Error: Ii nagodan fidnet rollaid",
     "roleNotFound": "Mii eat gávdnan rolla {{0}}"
   },
-  "getChannel": {
-    "notSpecified": "Čilge main don háliidat viežžat!",
-    "notRecognized": "Ii nagodan dovdat {{0}}"
-  },
-
   "reloadLang": {
     "errorReloading": "Mis leat váttisvuohta viežžat giellapáhkaid ođđasit",
     "successfullyReloaded": "Mii leat dál viežžan giellapáhkaid ođđasit"

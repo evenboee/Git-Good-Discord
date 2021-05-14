@@ -4,10 +4,6 @@
     "errorGettingRoles": "Error: Kunne ikke få tak i rollene",
     "roleNotFound": "Vi fant ikke rollen {{0}}"
   },
-  "getChannel": {
-    "notSpecified": "Spesifisier hva du ønsker å få!",
-    "notRecognized": "Klarer ikke å gjenkjenne {{0}}"
-  },
   "reloadLang": {
     "errorReloading": "Vi har problemer med å laste inn språkpakkene på nytt",
     "successfullyReloaded": "Vi har nå lastet inn språkpakkene på nytt"

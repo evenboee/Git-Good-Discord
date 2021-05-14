@@ -4,10 +4,6 @@
     "errorGettingRoles": "Error: Failed getting roles",
     "roleNotFound": "Could not find role {{0}}"
   },
-  "getChannel": {
-    "notSpecified": "Specify what you want to get",
-    "notRecognized": "Could not recognize {{0}}"
-  },
   "reloadLang": {
     "errorReloading": "We had problems reloading the language packs",
     "successfullyReloaded": "We successfully reloaded the language packs"

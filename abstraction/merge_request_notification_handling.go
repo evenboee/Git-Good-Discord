@@ -36,8 +36,24 @@ func (i Implementation) HandleGitlabNotification(notification gitlab_structs.Web
 	// Get all interested subscribers for the given usernames
 	interestedSubscribers := getInterestedSubscribers(&uniqueUsernames, i, gitlabInstance, discordChannelID, strconv.Itoa(repoID))
 
+
+	conn := i.DatabaseService.GetConnection()
+	language := "english"
+
+	settings, err := conn.GetChannelSettings(discordChannelID)
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		if settings.Language != "" {
+			language = settings.Language
+		}
+	}
+
 	// Send message to notify subscribers
-	i.DiscordService.SendMessage(discord_messages.NotifySubscribers(discordChannelID, interestedSubscribers, notification))
+	err = i.DiscordService.SendMessage(discord_messages.NotifySubscribers(language, discordChannelID, interestedSubscribers, notification))
+	if err != nil {
+		log.Printf("MergeRequestNotifcation - SendMessage - %v\n",err)
+	}
 }
 
 func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementation, gitlabInstance, discordChannelID string, repoID string) []database_structs.Subscriber {

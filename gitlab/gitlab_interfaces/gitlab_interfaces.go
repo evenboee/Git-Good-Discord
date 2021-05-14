@@ -5,12 +5,6 @@ import (
 	"net/http"
 )
 
-// NotificationMergeRequest Gitlab Merge Request Notification
-const NotificationMergeRequest = "merge_request"
-
-// NotificationIssue Gitlab Issue Notification
-const NotificationIssue = "issue"
-
 type Interface interface {
 	RegisterWebhook (project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error)
 	GetRegisteredWebhooks (project gitlab_structs.Project) ([]gitlab_structs.WebhookRegistration, error)
