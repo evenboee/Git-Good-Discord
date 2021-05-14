@@ -12,6 +12,7 @@ type commands struct {
 	NotificationIssue 			NotificationIssue 			`json:"notifyIssue"`
 	Subscribe         			Subscribe         			`json:"subscribe"`
 	Unsubscribe       			Unsubscribe       			`json:"unSubscribe"`
+	Errors						Errors						`json:"errors"`
 }
 
 type Ping struct {
@@ -79,4 +80,8 @@ type NotificationMergeRequest struct {
 
 type NotificationIssue struct {
 	Success string `json:"success"`
+}
+
+type Errors struct {
+	CommandNotRecognized string `json:"commandNotRecognized"`
 }

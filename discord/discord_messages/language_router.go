@@ -82,7 +82,6 @@ func GetChangeLanguage(command string, language string, newLanguage string, mess
 	case "DatabaseSetFail":
 		response = languagePack.DatabaseSetFail
 	case "Success":
-	default:
 		response = placeholderHandler(languagePack.Successful, newLanguage)
 	}
 
@@ -108,6 +107,16 @@ func NotAuthorizedMessage(language string, command string, messageCreate *discor
 			ChannelID: messageCreate.ChannelID,
 			Message:   response,
 			Mentions:  []string{messageCreate.Author.Mention()},
+		},
+	}
+}
+
+func GetCommandNotRecognized(language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage{
+	return discord_structs.EmbeddedMessage{
+		Message: discord_structs.Message{
+			ChannelID: m.ChannelID,
+			Message:   getLanguage(language).Errors.CommandNotRecognized,
+			Mentions:  []string{m.Author.Mention()},
 		},
 	}
 }
@@ -186,7 +195,6 @@ func GetSubscribe(command string, variable string, variable2 string, language st
 			Mentions:  []string{m.Author.Mention()},
 		},
 	}
-
 }
 
 func GetUnsubscribe(language string, command string, variable string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
@@ -201,7 +209,6 @@ func GetUnsubscribe(language string, command string, variable string, m *discord
 	case "DatabaseRemoveFail":
 		response = languagePack.DatabaseRemoveFail
 	case "Successful":
-	default:
 		response = placeholderHandler(languagePack.Successful, variable)
 	}
 
@@ -223,7 +230,7 @@ func NotifySubscribers(language string, discordChannelID string, subscribers []d
 
 	authorURL := utils.HTTPS(notification.Project.URL + "/" + notification.User.Username)
 
-	timeStamp, err := time.Parse("2006-01-02T15:04:05Z", strings.ReplaceAll(strings.Replace(notification.ObjectAttributes.CreatedAt, " ", "T", -1), "TUTC", "Z"))
+	timeStamp, err := time.Parse("2006-01-02T15:04:05Z", strings.ReplaceAll(strings.ReplaceAll(notification.ObjectAttributes.CreatedAt, " ", "T"), "TUTC", "Z"))
 
 	if err != nil {
 		timeStamp = time.Time{}

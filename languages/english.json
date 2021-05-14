@@ -54,5 +54,8 @@
   },
   "notifyIssue": {
     "success": "There is a new issue by {{0}}, take a look!"
+  },
+  "errors": {
+    "commandNotRecognized": "We do not recognize this command! Use \"help\" to list all commands"
   }
 }

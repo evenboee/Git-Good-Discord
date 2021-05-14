@@ -40,11 +40,7 @@ func commandHandler(i Implementation, s *discordgo.Session, m *discordgo.Message
 	case "help":
 		message = discord_messages.GetHelp(prefix, language, memberIsAdmin(m, s), m)
 	default:
-		message = discord_structs.EmbeddedMessage{Message: discord_structs.Message{
-			ChannelID: m.ChannelID,
-			Message:   fmt.Sprintf("Command: \"%s\" not recognized", command),
-			Mentions:  []string{m.Author.Mention()},
-		}}
+		message = discord_messages.GetCommandNotRecognized(language, m)
 	}
 	err := i.SendMessage(message)
 	if err != nil {
@@ -82,6 +78,7 @@ func languageHandler(prefix string, language string, db database_interfaces.Data
 			//TODO: Consider moving
 			err := db.GetConnection().SetChannelLanguage(messageCreate.ChannelID, newLanguage)
 			if err != nil {
+				log.Printf("Language handler - %v\n", err)
 				command = "DatabaseSetFail"
 			}
 		}

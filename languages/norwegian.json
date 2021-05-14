@@ -53,5 +53,8 @@
   },
   "notifyIssue":{
     "success": "Det har kommet en ny issue fra {{0}}, ta en titt!"
+  },
+  "errors": {
+    "commandNotRecognized": "Denne kommandoen kjenner vi ikke igjen, du kan bruke \"help\" for å få oversikt over alle kommandoene"
   }
 }
