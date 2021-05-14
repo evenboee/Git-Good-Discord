@@ -33,7 +33,8 @@ The system is run on OpenStack and a VPN is required to reach the IP.
 
 ### Setup
 
-- Authorize the bot for the server through [the discord website ](https://discord.com/oauth2/authorize?client_id=830135256514297936&scope=bot)
+- Authorize the bot for the server through [the discord website](https://discord.com/oauth2/authorize?client_id=830135256514297936&scope=bot)
+- Add **Admin role**
 
 ### Default settings
 
@@ -46,19 +47,18 @@ There are some default setting for each channel that can be changed later on.
 
 Assuming default command prefix (**!**)
 
+`<item>` is a placeholder where **item** indicates what should go in the placeholder
+
 #### General commands
 
 - `!help` Lists commands
 - `!subscibe <gitlab_instance>/<repo_id>/<gitlab_username> <type1,type2>` to subscribe to events
+    - This requires that an access token has been added for the project
     - **type** is the type of event given as list e.g. issues,merge_requests or issues
     - e.g. `!subscribe git.gvk.idi.ntnu.no/1965/evenbbo1 issues,merge_requests`
 - `!unsubscribe <gitlab_instance>/<repo_id>/<gitlab_username>` to unsubscribe from all events
     - e.g. `!unsubscribe git.gvk.idi.ntnu.no/1965/evenbbo1`
-- `!get <item>` to get information
-    - **item** is what you want to get
-    - e.g. `!get channel_id`
-- `!ping <role>` ping a role
-    - e.g. `!ping admin`
+- `!subscriptions` to get subscriptions of channel 
 
 #### Admin commands
 
@@ -70,17 +70,18 @@ Commands requiring user to have the role **Admin**
 - `!set prefix <prefix>` to set prefix of the channel
     - e.g. `!set prefix #`
     - Note: This command always requires the preifx **!**. This is in case the prefix is forgotten
-
+- `!access_token <instance>/<repo_id>/<token>` set access token of a project
+    - specific to each channel
 
 ## Known bugs
 
-- As of now: Nothing
+- Nothing that we know of
 
 
 ## Further improvements
 
 - Gitlab has more events such as push, comments, pipeline.
-  This could be added but it would mostly be similar to merge requests
+  This could be added, although it would mostly be similar to merge requests
   and issues and would therefore not demonstrate any greater competence.
 - Caching. To reduce the amount of requests sent to the database as we are 
   limited to 50k reads per day (not an issue in the scope of this task but it could be in a large scale deployment).
@@ -88,13 +89,16 @@ Commands requiring user to have the role **Admin**
   The settings for each channel is read for each message sent. Settings are one thing that 
   we only really needed to read once on startup and then the only interaction with firebase would be writing.
 
+- Testing. We could add more tests. There are enough tests demonstrate competency 
+  in testing and mocking, but we have not added tests to everything.
 
 ## Limitations
 
 As of now it only allows for connection to the **git.gvk.idi.ntnu.no** gitlab instance. 
 This is not a limitation of the program but rather of the deployment method. 
 Since we are using OpenStack other instances can not reach the IP and therefore not post anything. 
-Switching to a different IaaS such as GCP would fix this (could also be a PaaS solution as long as it has support for docker as out deployment method uses it).
+Switching to a different IaaS such as GCP would fix this 
+(could also be a PaaS solution as long as it has support for docker as our deployment method uses it).
 
 
 ---

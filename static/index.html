@@ -64,42 +64,41 @@
     </ul>
     <h3 id="discord-commands">Discord commands</h3>
     <p>Assuming default command prefix (<span class="ib">!</span>)</p>
+
     <h4 id="general-commands">General commands</h4>
-        <ul>
-            <li><code>!help</code> Lists commands</li>
-            <li><code>!subscibe &lt;gitlab_instance&gt;/&lt;repo_id&gt;/&lt;gitlab_username&gt; &lt;type1,type2&gt;</code> to subscribe to events<ul>
-            <li><span class="ib">type</span> is the type of event given as list e.g. issues,merge_requests or issues</li>
+    <ul>
+        <li><code>!help</code> Lists commands</li>
+        <li><code>!subscibe &lt;gitlab_instance&gt;/&lt;repo_id&gt;/&lt;gitlab_username&gt; &lt;type1,type2&gt;</code> to subscribe to events<ul>
+            <li>This requires that an access token has been added for the project</li>
+            <li><strong>type</strong> is the type of event given as list e.g. issues,merge_requests or issues</li>
             <li>e.g. <code>!subscribe git.gvk.idi.ntnu.no/1965/evenbbo1 issues,merge_requests</code></li>
         </ul>
-    </li>
-    <li><code>!unsubscribe &lt;gitlab_instance&gt;/&lt;repo_id&gt;/&lt;gitlab_username&gt;</code> to unsubscribe from all events<ul>
-    <li>e.g. <code>!unsubscribe git.gvk.idi.ntnu.no/1965/evenbbo1</code></li>
-    </ul>
-    </li>
-    <li><code>!get &lt;item&gt;</code> to get information<ul>
-    <li><span class="ib">item</span> is what you want to get</li>
-    <li>e.g. <code>!get channel_id</code></li>
-    </ul>
-    </li>
-    <li><code>!ping &lt;role&gt;</code> ping a role<ul>
-    <li>e.g. <code>!ping admin</code></li>
-    </ul>
-    </li>
+        </li>
+        <li><code>!unsubscribe &lt;gitlab_instance&gt;/&lt;repo_id&gt;/&lt;gitlab_username&gt;</code> to unsubscribe from all events<ul>
+            <li>e.g. <code>!unsubscribe git.gvk.idi.ntnu.no/1965/evenbbo1</code></li>
+        </ul>
+        </li>
+        <li><code>!subscriptions</code> to get subscriptions of channel </li>
     </ul>
     <h4 id="admin-commands">Admin commands</h4>
-    <p>Commands requiring user to have the role <span class="ib">Admin</span></p>
+    <p>Commands requiring user to have the role <strong>Admin</strong></p>
     <ul>
-    <li><code>!reload</code> to reload language packs. This is not usually needed but allows for changes in language packs without having to reboot the system.</li>
-    <li><code>!language &lt;language&gt;</code> to set language of channel<ul>
-    <li>e.g. <code>!language english</code></li>
+        <li><code>!reload</code> to reload language packs. This is not usually needed but allows for changes in language packs without having to reboot the system.</li>
+        <li><code>!language &lt;language&gt;</code> to set language of channel<ul>
+            <li>e.g. <code>!language english</code></li>
+        </ul>
+        </li>
+        <li><code>!set prefix &lt;prefix&gt;</code> to set prefix of the channel<ul>
+            <li>e.g. <code>!set prefix #</code></li>
+            <li>Note: This command always requires the preifx <strong>!</strong>. This is in case the prefix is forgotten</li>
+        </ul>
+        </li>
+        <li><code>!access_token &lt;instance&gt;/&lt;repo_id&gt;/&lt;token&gt;</code> set access token of a project<ul>
+            <li>specific to each channel</li>
+        </ul>
+        </li>
     </ul>
-    </li>
-    <li><code>!set prefix &lt;prefix&gt;</code> to set prefix of the channel<ul>
-    <li>e.g. <code>!set prefix #</code></li>
-    <li>Note: This command always requires the preifx <span class="ib">!</span>. This is in case the prefix is forgotten</li>
-    </ul>
-    </li>
-    </ul>
+
 </section>
 
 </main>
