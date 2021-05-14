@@ -166,6 +166,11 @@ func subscribeGetCommands(db database_interfaces.Database, gitlab gitlab_interfa
 		}
 	}
 
+	if len(newSubscriptions) == 0 {
+		command = "PathFormatError"
+		return command, variable, variable2
+	}
+
 	token, err := utils.GenerateUUID()
 	if err != nil {
 		command = "TokenGenerationFail"
