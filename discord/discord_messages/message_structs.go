@@ -13,6 +13,7 @@ type commands struct {
 	Subscribe         			Subscribe         			`json:"subscribe"`
 	Unsubscribe       			Unsubscribe       			`json:"unSubscribe"`
 	Errors						Errors						`json:"errors"`
+	SetAccessToken              SetAccessToken              `json:"setAccessToken"`
 }
 
 type Ping struct {
@@ -84,4 +85,13 @@ type NotificationIssue struct {
 
 type Errors struct {
 	CommandNotRecognized string `json:"commandNotRecognized"`
+}
+
+type SetAccessToken struct {
+	NotAuthorized    string `json:"notAuthorized"`
+	WrongParts       string `json:"wrongParts"`
+	WrongPath        string `json:"wrongPath"`
+	PathElementEmpty string `json:"pathElementEmpty"`
+	AddTokenFail     string `json:"addTokenFail"`
+	Successful       string `json:"successful"`
 }

@@ -56,5 +56,13 @@
   },
   "errors": {
     "commandNotRecognized": "Denne kommandoen kjenner vi ikke igjen, du kan bruke \"help\" for å få oversikt over alle kommandoene"
+  },
+  "setAccessToken": {
+    "notAuthorized": "Du er ikke autorisert for denne kommandoen",
+    "wrongParts": "Ikke nok deler. Forbentet 2 men fikk {{0}}",
+    "wrongPath": "Feil format på stien. Forventet <instance>/<project_id>/<token>",
+    "pathElementEmpty": "Del {{0}} av stien kan ikke være tom",
+    "addTokenFail": "Klarte ikke å legge til token",
+    "successful": "Access token ble satt til {{0}}. Slett meldingen du sendte for sikkerhet"
   }
 }

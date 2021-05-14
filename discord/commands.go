@@ -22,6 +22,12 @@ func commandHandler(i Implementation, s *discordgo.Session, m *discordgo.Message
 	switch strings.ToLower(command) {
 	case "get":
 		message = getHandler(prefix, m)
+	case "access_token":
+		if !memberIsAdmin(m, s) {
+			message = discord_messages.NotAuthorizedMessage(language, "SetAccessToken", m)
+		} else {
+			message = getSetAccessToken(language, i.DatabaseService, s, m)
+		}
 	case "ping":
 		_, info := splitMessage(m.Content, prefix)
 		message = discord_structs.EmbeddedMessage{Message: discord_messages.GetPing(language, info, s, m)}
@@ -48,6 +54,35 @@ func commandHandler(i Implementation, s *discordgo.Session, m *discordgo.Message
 		return
 	}
 }
+
+func getSetAccessToken(language string, db database_interfaces.Database, s *discordgo.Session, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	parts := strings.Split(m.Content, " ")
+
+	// !access_token {path}
+	if len(parts) != 2 {
+		return discord_messages.GetSetAccessToken("WrongParts", language, "", fmt.Sprintf("%d", len(parts)), m)
+	}
+
+	path := strings.Split(parts[1], "/")
+	// instance/project_id/token
+	if len(path) != 3 {
+		return discord_messages.GetSetAccessToken("WrongPath", language, "", "", m)
+	}
+
+	for i, v := range path {
+		if v == "" {
+			return discord_messages.GetSetAccessToken("PathElementEmpty", language, "", fmt.Sprintf("%d", i + 1), m)
+		}
+	}
+
+	err := db.GetConnection().AddAccessToken(m.ChannelID, path[0], path[1], path[2])
+	if err != nil {
+		return discord_messages.GetSetAccessToken("AddTokenFail", language, "", "", m)
+	}
+
+	return discord_messages.GetSetAccessToken("Successful", language, path[2], "", m)
+}
+
 
 func reloadHandler(language string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	err := discord_messages.ReloadLanguageFiles()

@@ -54,6 +54,32 @@ func GetPing(language string, info []string, session *discordgo.Session, message
 	}
 }
 
+func GetSetAccessToken(command string, language string, newAccessToken string, expectedParts string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
+	languagePack := getLanguage(language).SetAccessToken
+	response := ""
+	switch command {
+	case "WrongParts":
+		response = placeholderHandler(languagePack.WrongParts, expectedParts)
+	case "WrongPath":
+		response = languagePack.WrongPath
+	case "PathElementEmpty":
+		response = placeholderHandler(languagePack.PathElementEmpty, expectedParts)
+	case "AddTokenFail":
+		response = languagePack.AddTokenFail
+	case "Successful":
+		response = placeholderHandler(languagePack.Successful, newAccessToken)
+	}
+
+	return discord_structs.EmbeddedMessage{
+		Message:      discord_structs.Message{
+			ChannelID: messageCreate.ChannelID,
+			Message:   response,
+			Mentions:  []string{messageCreate.Author.Mention()},
+		},
+		MessageEmbed: discordgo.MessageEmbed{},
+	}
+}
+
 func GetReloadLanguage(language string, action string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	reloadLanguage := getLanguage(language).ReloadLanguage
 
@@ -100,6 +126,8 @@ func NotAuthorizedMessage(language string, command string, messageCreate *discor
 		response = getLanguage(language).ChangeLanguage.NotAuthorized
 	} else if command == "SetPrefix" {
 		response = getLanguage(language).SetLanguagePrefix.NotAuthorized
+	} else if command == "SetAccessToken" {
+		response = getLanguage(language).SetAccessToken.NotAuthorized
 	}
 
 	return discord_structs.EmbeddedMessage{

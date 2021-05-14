@@ -57,5 +57,13 @@
   },
   "errors": {
     "commandNotRecognized": "We do not recognize this command! Use \"help\" to list all commands"
+  },
+  "setAccessToken": {
+    "notAuthorized": "You are not authorized for this command",
+    "wrongParts": "Not enough parts. Expected 2 but got {{0}}",
+    "wrongPath": "Wrong format of path. Expected <instance>/<project_id>/<token>",
+    "pathElementEmpty": "Part {{0}} of path cannot be empty",
+    "addTokenFail": "Failed to add token",
+    "successful": "Access token set to {{0}}. Delete your message for security"
   }
 }
