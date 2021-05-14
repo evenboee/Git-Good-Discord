@@ -16,8 +16,12 @@ Group 1 - The Three Gophers
 The system is not intended to be run locally although it is possible.
 
 1. Clone repository with `git clone https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/simen_bai/git-good-discord-group-1.git`
-2. Add firebase and discord credentials
-3. Run docker `sudo docker compose up -d --build`
+2. Add firebase and discord credentials from the example files
+3. Update IP of service.json
+4. Firestore needs a composite index on **channel_id** and **id** for the **subscriptions** command.
+   This can either be added manually, or you can try the **subscriptions** command which will crash the system.
+   The error message will contain a link to generate the index.
+5. Run docker `sudo docker compose up -d --build`
 
 
 ## Usage
