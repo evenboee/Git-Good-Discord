@@ -63,6 +63,7 @@ type ErrorResponse struct {
 
 }
 
+// User is a user as shown in webhook notification
 type User struct {
 	ID int `json:"id"`
 	Name string `json:"name"`
@@ -70,7 +71,7 @@ type User struct {
 	Email string `json:"email"`
 }
 
-// ObjectAttributes Shared attributes for all webhooks. Some variables may not be
+// ObjectAttributes are shared attributes for all webhooks. Some variables may not be
 // set depending on what type of webhook it belongs to
 type ObjectAttributes struct {
 	AssigneeID int `json:"assignee_id"`

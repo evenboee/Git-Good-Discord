@@ -14,6 +14,7 @@ import (
 	"strings"
 )
 
+// commandHandler handles commands
 func commandHandler(i Implementation, s *discordgo.Session, m *discordgo.MessageCreate, prefix string, language string) {
 	parts := strings.Split(m.Content, " ")
 	command := strings.Trim(strings.ToLower(parts[0]), prefix)
@@ -83,7 +84,7 @@ func getSetAccessToken(language string, db database_interfaces.Database, s *disc
 	return discord_messages.GetSetAccessToken("Successful", language, path[2], "", m)
 }
 
-
+// reloadHandler handles reload command
 func reloadHandler(language string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	err := discord_messages.ReloadLanguageFiles()
 	action := ""
@@ -96,6 +97,7 @@ func reloadHandler(language string, messageCreate *discordgo.MessageCreate) disc
 	return discord_messages.GetReloadLanguage(language, action, messageCreate)
 }
 
+// languageHandler handles language command
 func languageHandler(prefix string, language string, db database_interfaces.Database, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	_, info := splitMessage(messageCreate.Content, prefix)
 	command := ""
@@ -121,6 +123,7 @@ func languageHandler(prefix string, language string, db database_interfaces.Data
 	return discord_messages.GetChangeLanguage(command, language, newLanguage, messageCreate)
 }
 
+// setPrefixHandler handles the get prefix command
 func setPrefixHandler(newPrefix string, language string, db database_interfaces.Database, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	//TODO: Consider moving
 	err := db.GetConnection().SetChannelPrefix(m.ChannelID, newPrefix)
@@ -132,6 +135,7 @@ func setPrefixHandler(newPrefix string, language string, db database_interfaces.
 	return discord_messages.SetPrefix(command, newPrefix, language, m)
 }
 
+// unsubscribeHandler handles the unsubscribe command
 func unsubscribeHandler(language string, db database_interfaces.Database, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	command := ""
 	variable := ""
@@ -160,6 +164,7 @@ func unsubscribeHandler(language string, db database_interfaces.Database, m *dis
 	return discord_messages.GetUnsubscribe(language, command, variable, m)
 }
 
+// subscribeHandler handles the subscribe command
 func subscribeHandler(language string, db database_interfaces.Database, gitlab gitlab_interfaces.Interface, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	command, variable, variable2 := subscribeGetCommands(db, gitlab, m)
 	return discord_messages.GetSubscribe(command, variable, variable2, language, m)

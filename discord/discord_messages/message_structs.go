@@ -1,5 +1,6 @@
 package discord_messages
 
+// commands contains the bot commands
 type commands struct {
 	Ping              			Ping              			`json:"ping"`
 	GetChannel        			GetChannel        			`json:"getChannel"`
@@ -16,21 +17,25 @@ type commands struct {
 	SetAccessToken              SetAccessToken              `json:"setAccessToken"`
 }
 
+// Ping contains Ping-related words
 type Ping struct {
 	ErrorGettingRoles string `json:"errorGettingRoles"`
 	RoleNotFound      string `json:"roleNotFound"`
 }
 
+// GetChannel contains GetChannel-related words
 type GetChannel struct {
 	NotSpecified  string `json:"notSpecified"`
 	NotRecognized string `json:"notRecognized"`
 }
 
+// ReloadLang contains ReloadLang-related words
 type ReloadLang struct {
 	ErrorReloading       string `json:"errorReloading"`
 	SuccessfullyReloaded string `json:"successfullyReloaded"`
 }
 
+// ChangeLanguage contains ChangeLanguage-related words
 type ChangeLanguage struct {
 	NoParam         string `json:"noParam"`
 	InvalidLanguage string `json:"invalidLang"`
@@ -39,11 +44,13 @@ type ChangeLanguage struct {
 	NotAuthorized   string `json:"notAuthorized"`
 }
 
+// SetLanguagePrefix contains SetLanguagePrefix-related words
 type SetLanguagePrefix struct {
 	NotAuthorized string `json:"notAuthorized"`
 	Successful    string `json:"successful"`
 }
 
+// HelpCommand contains HelpCommand-related words
 type HelpCommand struct {
 	Get         string `json:"get"`
 	Ping        string `json:"ping"`
@@ -56,6 +63,7 @@ type HelpCommand struct {
 	Unsubscribe string `json:"unsubscribe"`
 }
 
+// Subscribe contains Subscribe-related words
 type Subscribe struct {
 	DatabaseAddFail              string `json:"databaseAddFail"`
 	Successful                   string `json:"successful"`
@@ -68,6 +76,7 @@ type Subscribe struct {
 	AccessTokenFail              string `json:"accessTokenFail"`
 }
 
+// Unsubscribe contains Unsubscribe-related words
 type Unsubscribe struct {
 	DatabaseRemoveFail string `json:"databaseRemoveFail"`
 	PathFormatError    string `json:"pathFormatError"`
@@ -75,14 +84,17 @@ type Unsubscribe struct {
 	Successful         string `json:"successful"`
 }
 
+// NotificationMergeRequest contains NotificationMergeRequest-related words
 type NotificationMergeRequest struct {
 	Success string `json:"success"`
 }
 
+// NotificationIssue contains NotificationIssue-related words
 type NotificationIssue struct {
 	Success string `json:"success"`
 }
 
+// Errors contains error-related words
 type Errors struct {
 	CommandNotRecognized string `json:"commandNotRecognized"`
 }

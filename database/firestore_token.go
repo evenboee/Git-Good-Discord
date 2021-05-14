@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// addTokenToFirestore will add a given token type to firestore
 func addTokenToFirestore(conn FirestoreConnection, channel_id string, gitlab_instance string, repo_id string, token string, token_type string) error {
 	if conn.open != true {
 		return connectionNotOpenError
@@ -18,6 +19,7 @@ func addTokenToFirestore(conn FirestoreConnection, channel_id string, gitlab_ins
 	return err
 }
 
+// getTokenFromFirestore fetches a token from firestore
 func getTokenFromFirestore(conn FirestoreConnection, channel_id string, gitlab_instance string, repo_id string, token_name string) (string, error) {
 	if conn.open != true {
 		return "", connectionNotOpenError

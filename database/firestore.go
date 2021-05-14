@@ -20,6 +20,8 @@ type FirestoreConnection struct {
 	client *firestore.Client
 }
 
+// Firestore constants
+
 const Subscribers = "subscribers"
 const Instance = "instances"
 const Repos = "repos"
@@ -53,6 +55,7 @@ func (db FirestoreDatabase) ConnectToDatabase(errorChan chan error) {
 func (db FirestoreDatabase) GetConnection() database_interfaces.DatabaseConnection {
 	return databaseConnection
 }
+
 func (conn FirestoreConnection) AddSubscriber(channel_id string, gitlab_instance string, repo_id string, gitlab_username string, discord_user_id string, issues bool, merge_requests bool) error {
 	if conn.open != true {
 		return connectionNotOpenError

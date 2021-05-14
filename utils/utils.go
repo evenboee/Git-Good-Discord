@@ -22,6 +22,7 @@ func ConvertToUniqueIntSlice(intSlice []int) []int {
 	return list
 }
 
+// GenerateUUID generates a Universally unique identifier
 func GenerateUUID() (string, error) {
 	b := make([]byte, 16)
 	_, err := rand.Read(b)
@@ -32,6 +33,7 @@ func GenerateUUID() (string, error) {
 		b[0:4], b[4:6], b[6:8], b[8:10], b[10:]), nil
 }
 
+// HTTPS will ensure that URL has either http or https as set protocol
 func HTTPS(URL string, notSecure ...bool) string {
 	if strings.HasPrefix(strings.ToLower(URL), "http") {
 		return URL

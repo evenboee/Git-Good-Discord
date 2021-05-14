@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// GetPing gets the message for the ping command
 func GetPing(language string, info []string, session *discordgo.Session, messageCreate *discordgo.MessageCreate) discord_structs.Message {
 	pingLanguage := getLanguage(language).Ping
 
@@ -80,6 +81,7 @@ func GetSetAccessToken(command string, language string, newAccessToken string, e
 	}
 }
 
+// GetReloadLanguage gets the message for the Reload Language command
 func GetReloadLanguage(language string, action string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	reloadLanguage := getLanguage(language).ReloadLanguage
 
@@ -97,6 +99,7 @@ func GetReloadLanguage(language string, action string, messageCreate *discordgo.
 	}
 }
 
+// GetChangeLanguage gets the message for the Change Language command
 func GetChangeLanguage(command string, language string, newLanguage string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	languagePack := getLanguage(language).ChangeLanguage
 	response := ""
@@ -120,6 +123,7 @@ func GetChangeLanguage(command string, language string, newLanguage string, mess
 	}
 }
 
+// NotAuthorizedMessage gets the message for when you are not authorized
 func NotAuthorizedMessage(language string, command string, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	response := "You are not authorized to do this!"
 	if command == "ChangeLanguage" {
@@ -139,6 +143,7 @@ func NotAuthorizedMessage(language string, command string, messageCreate *discor
 	}
 }
 
+// GetCommandNotRecognized gets the message for when a command is not recognized
 func GetCommandNotRecognized(language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage{
 	return discord_structs.EmbeddedMessage{
 		Message: discord_structs.Message{
@@ -149,6 +154,7 @@ func GetCommandNotRecognized(language string, m *discordgo.MessageCreate) discor
 	}
 }
 
+// SetPrefix gets the message for the Set Prefix command
 func SetPrefix(command string, prefix string, language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	languagePack := getLanguage(language).SetLanguagePrefix
 	response := ""
@@ -167,6 +173,7 @@ func SetPrefix(command string, prefix string, language string, m *discordgo.Mess
 	}
 }
 
+// GetHelp gets the message for the help command
 func GetHelp(prefix string, language string, isAdmin bool, messageCreate *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	helpLanguage := getLanguage(language).HelpCommand
 	response := "\n***Commands***\n> " +
@@ -193,6 +200,7 @@ func GetHelp(prefix string, language string, isAdmin bool, messageCreate *discor
 	}
 }
 
+// GetSubscribe gets the message for the subscribe command
 func GetSubscribe(command string, variable string, variable2 string, language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	languagePack := getLanguage(language).Subscribe
 	response := ""
@@ -225,6 +233,7 @@ func GetSubscribe(command string, variable string, variable2 string, language st
 	}
 }
 
+// GetUnsubscribe gets the message for the unsubscribe command
 func GetUnsubscribe(language string, command string, variable string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	languagePack := getLanguage(language).Unsubscribe
 	response := ""
@@ -249,6 +258,8 @@ func GetUnsubscribe(language string, command string, variable string, m *discord
 	}
 }
 
+// NotifySubscribers gets the message for subscribers when a gitlab event has
+// occured
 func NotifySubscribers(language string, discordChannelID string, subscribers []database_structs.Subscriber, notification gitlab_structs.WebhookNotification) discord_structs.EmbeddedMessage {
 	mentions := make([]string, 1)
 	for _, subscriber := range subscribers {
@@ -289,6 +300,8 @@ func NotifySubscribers(language string, discordChannelID string, subscribers []d
 	}
 }
 
+// getWebhookNotificationMessage gets the correct message based on the type of
+// gitlab even that occured
 func getWebhookNotificationMessage(language string, notification gitlab_structs.WebhookNotification) string {
 	switch notification.ObjectKind {
 	case gitlab_structs.NotificationMergeRequest:

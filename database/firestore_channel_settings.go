@@ -39,6 +39,7 @@ func (conn FirestoreConnection) GetChannelSettings(channel_id string) (database_
 	return channelSettings, err
 }
 
+// setChannelField will set a firestore field with the given value
 func setChannelField(conn FirestoreConnection, channel_id string, fieldName string, fieldValue interface{}) error {
 	if conn.open != true {
 		return connectionNotOpenError

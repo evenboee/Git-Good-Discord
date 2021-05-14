@@ -1,10 +1,12 @@
 package utils
 
+// DiscordDetails contains Details related to Discord bot
 type DiscordDetails struct {
 	Token         string `json:"token"`
 	ApplicationID string `json:"application-id"`
 }
 
+// FirestoreDetails contains details related to Firestore
 type FirestoreDetails struct {
 	Type                    string `json:"type"`
 	ProjectID               string `json:"project_id"`

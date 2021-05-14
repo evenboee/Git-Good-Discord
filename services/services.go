@@ -31,6 +31,8 @@ var (
 	webHandlerImplementation http_serving.Implementation
 )
 
+// InjectAndInitializeServices will perform dependency injection for all the
+// services and initialize their dependencies so that they can be used
 func InjectAndInitializeServices () {
 	// Inject
 	gitlabService = &gitlabImplementation
@@ -54,22 +56,27 @@ func InjectAndInitializeServices () {
 	webHandlerImplementation.GitlabService = gitlabService
 }
 
+// GetGitlab gets the Gitlab service explicitly without being injected
 func GetGitlab() gitlab_interfaces.Interface {
 	return gitlabService
 }
 
+// GetDiscord gets the Discord service explicitly without being injected
 func GetDiscord() discord_interfaces.Interface {
 	return discordService
 }
 
+// GetAbstraction gets the Abstraction service explicitly without being injected
 func GetAbstraction() abstraction_interfaces.Interface {
 	return abstractionService
 }
 
+// GetDatabase gets the Database service explicitly without being injected
 func GetDatabase () database_interfaces.Database{
 	return databaseService
 }
 
+// GetWebHandler gets the Web Handler service explicitly without being injected
 func GetWebHandler () http_serving_interfaces.WebHandler {
 	return webHandlerService
 }

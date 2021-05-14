@@ -1,17 +1,12 @@
 package http_serving
 
 import (
-	"git-good-discord/gitlab/gitlab_interfaces"
 	"log"
 	"net/http"
 	"strings"
 )
 
 const port = "8080"
-
-type Implementation struct {
-	GitlabService gitlab_interfaces.Interface
-}
 
 var fs = http.FileServer(http.Dir("./static"))
 
@@ -24,6 +19,7 @@ func (i Implementation) Start(errorChannel chan <- error) {
 	errorChannel <- err
 }
 
+// getRedirectionHandler gets the redirection handler
 func getRedirectionHandler(i Implementation) func (http.ResponseWriter, *http.Request) {
 	return func (w http.ResponseWriter, req *http.Request) {
 		switch {
@@ -35,6 +31,7 @@ func getRedirectionHandler(i Implementation) func (http.ResponseWriter, *http.Re
 	}
 }
 
+// getGitlabWebhookNotificationHandler gets gitlab webhook notification handler
 func getGitlabWebhookNotificationHandler (i Implementation) func(http.ResponseWriter, *http.Request) {
 	// Wrap handler with error handling and handle request
 	return func(w http.ResponseWriter, req *http.Request) {

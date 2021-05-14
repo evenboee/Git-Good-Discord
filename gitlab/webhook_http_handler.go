@@ -55,6 +55,7 @@ func (i Implementation) HandleWebhookNotificationHTTP(w http.ResponseWriter, req
 	return nil
 }
 
+// checkSecurityToken checks if security given is valid
 func checkSecurityToken(i Implementation, token string, discord_channel_id string, url string, repo_id string) error {
 	gitlab_instance := strings.Split(url, "/")[2]
 

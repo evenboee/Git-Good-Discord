@@ -10,10 +10,6 @@ import (
 	"net/url"
 )
 
-// RegisterWebhook will register a Webhook for the given Gitlab Project and
-// return Registration information. This function does not store the registration
-// anywhere, nor does it create some sort of webhook invocation handler. That
-// kind of functionality is up to the caller to implement.
 func (i Implementation) RegisterWebhook(project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error) {
 	//If webhook exists or there is an error
 	ok, err := i.DoesWebhookWithURLExist(project, webhook.Url)

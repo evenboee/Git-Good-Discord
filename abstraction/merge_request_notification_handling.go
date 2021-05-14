@@ -56,6 +56,8 @@ func (i Implementation) HandleGitlabNotification(notification gitlab_structs.Web
 	}
 }
 
+// getInterestedSubscribers will fetch interested subscribers (without
+// duplicates) for the given usernames
 func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementation, gitlabInstance, discordChannelID string, repoID string) []database_structs.Subscriber {
 	// Interested subscribers map in form of "Discord ID -> Subscriber"
 	interestedSubscribersMap := make(map[string]database_structs.Subscriber)
@@ -95,6 +97,8 @@ func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementat
 	return interestedSubscribers
 }
 
+// addUsernameIfAbsent will add username to the given map if it does not already
+// exist in the map
 func addUsernameIfAbsent (uniqueUsernames *map[string]string, username string) {
 	// Return if username exists in map
 	for _, mapUsername := range *uniqueUsernames {
@@ -106,6 +110,8 @@ func addUsernameIfAbsent (uniqueUsernames *map[string]string, username string) {
 	(*uniqueUsernames)["name:" + username] = username
 }
 
+// addUsernamesIfAbsent will get the usernames for the given ids and add them to
+// the given map (without duplicates)
 func addUsernamesIfAbsent (uniqueUsernames *map[string]string, i Implementation, url string, ids ...int) {
 	// Only retain unique ids
 	ids = utils.ConvertToUniqueIntSlice(ids)

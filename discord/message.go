@@ -26,6 +26,7 @@ func (i Implementation) SendMessage(msg discord_structs.EmbeddedMessage) error {
 	return err
 }
 
+// buildMentions builds a mentions-string
 func buildMentions(mentions []string) string {
 	mentionString := ""
 	for _, mention := range mentions {

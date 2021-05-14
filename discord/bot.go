@@ -51,6 +51,7 @@ func (i Implementation) Start(errorChan chan error) {
 	os.Exit(0) // Sending signal as original signal was consumed
 }
 
+// getMessageHandler gets the message handler
 func getMessageHandler(i Implementation) func(s *discordgo.Session, m *discordgo.MessageCreate) {
 	return func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		// Ignore messages sent by bot
@@ -68,6 +69,7 @@ func getMessageHandler(i Implementation) func(s *discordgo.Session, m *discordgo
 	}
 }
 
+// getSettings gets channel settings from the given database connection
 func getSettings(conn database_interfaces.DatabaseConnection, channel_id string) (string, string) {
 	prefix := "!"
 	language := "english"
@@ -86,6 +88,7 @@ func getSettings(conn database_interfaces.DatabaseConnection, channel_id string)
 	return prefix, language
 }
 
+// setPrefix sends the set prefix message
 func setPrefix(i Implementation, s *discordgo.Session, m *discordgo.MessageCreate, language string) bool {
 	if match := regexp.MustCompile("!set prefix (.+)").FindStringSubmatch(strings.ToLower(m.Content)); len(match) == 2 {
 		if memberIsAdmin(m, s) {

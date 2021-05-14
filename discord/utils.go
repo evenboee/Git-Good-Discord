@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// memberIsAdmin checks if member is admin
 func memberIsAdmin(m *discordgo.MessageCreate, s *discordgo.Session,) bool {
 	roles, err := s.GuildRoles(m.GuildID)
 	if err != nil {
@@ -25,6 +26,7 @@ func memberIsAdmin(m *discordgo.MessageCreate, s *discordgo.Session,) bool {
 	return false
 }
 
+// splitMessage will split message into command and info
 func splitMessage(message string, prefix string) (string, []string) {
 	parts := strings.Split(message, " ")
 	command := strings.Trim(parts[0], prefix)

@@ -9,6 +9,7 @@ import (
 
 var languageFiles = make(map[string]commands)
 
+// ReloadLanguageFiles reloads the language files
 func ReloadLanguageFiles() error {
 	var err error
 	tempLanguageFiles, err := getLanguageFiles()
@@ -64,6 +65,8 @@ func ReloadLanguageFiles() error {
 	return nil
 }
 
+// LoadLanguageFiles will load the language files and write to error channel if
+// an error occurs
 func LoadLanguageFiles(errorChan chan error) {
 	err := ReloadLanguageFiles()
 	if err != nil {
@@ -71,6 +74,7 @@ func LoadLanguageFiles(errorChan chan error) {
 	}
 }
 
+// getLanguageFiles will get language files for the given of commands
 func getLanguageFiles() (map[string]commands, error) {
 	files, err := ioutil.ReadDir("languages")
 	if err != nil {
@@ -86,12 +90,14 @@ func getLanguageFiles() (map[string]commands, error) {
 	return commandsMap, nil
 }
 
+// parseLanguageFile will parse the given language file to commands
 func parseLanguageFile(languageFileName string) (commands, error) {
 	var language commands
 	err := utils.FileToInterface(languageFileName, &language)
 	return language, err
 }
 
+// getLanguage will get the commands for the given language
 func getLanguage(language string) commands {
 	if lang, ok := languageFiles[language]; ok {
 		return lang
@@ -99,6 +105,7 @@ func getLanguage(language string) commands {
 	return languageFiles["english"]
 }
 
+// IsLanguage checks if language provided exists
 func IsLanguage(language string) bool {
 	if language != "english" {
 		if _, ok := languageFiles[language]; !ok {
