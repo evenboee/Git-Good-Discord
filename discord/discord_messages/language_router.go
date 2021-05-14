@@ -154,6 +154,8 @@ func NotAuthorizedMessage(language string, command string, messageCreate *discor
 		response = getLanguage(language).SetLanguagePrefix.NotAuthorized
 	} else if command == "SetAccessToken" {
 		response = getLanguage(language).SetAccessToken.NotAuthorized
+	} else if command == "ReloadLanguage" {
+		response = getLanguage(language).ReloadLanguage.NotAuthorized
 	}
 
 	return discord_structs.EmbeddedMessage{
@@ -202,7 +204,7 @@ func GetHelp(prefix string, language string, isAdmin bool, messageCreate *discor
 		prefix + "help - " + helpLanguage.Help + "\n> " +
 		prefix + "subscribe <instance>/<repo_id>/<gitlab_username> <type1,type2,...> - " + helpLanguage.Subscribe + "\n> " +
 		prefix + "unsubscribe <instance>/<repo_id>/<gitlab_username> - " + helpLanguage.Unsubscribe + "\n> " +
-		prefix + "get <channel-name> - " + helpLanguage.Get + "\n> " +
+		prefix + "subscriptions - " + helpLanguage.Subscriptions + "\n> " +
 		prefix + "ping <group> - " + helpLanguage.Ping + "\n"
 
 	if isAdmin {
@@ -210,6 +212,7 @@ func GetHelp(prefix string, language string, isAdmin bool, messageCreate *discor
 			"***Admin commands***\n> " +
 			prefix + "reload - " + helpLanguage.Reload + " " + helpLanguage.AdminOnly + "\n> " +
 			prefix + "language <language> - " + helpLanguage.Reload + " " + helpLanguage.AdminOnly + "\n> " +
+			prefix + "access_token <instance>/<repo_id>/<token> - " + helpLanguage.Access + " " + helpLanguage.AdminOnly + "\n> " +
 			"!" + "set prefix <prefix> - " + helpLanguage.SetPrefix + " " + helpLanguage.AdminOnly + "\n"
 	}
 

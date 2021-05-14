@@ -34,6 +34,7 @@ type GetChannel struct {
 type ReloadLang struct {
 	ErrorReloading       string `json:"errorReloading"`
 	SuccessfullyReloaded string `json:"successfullyReloaded"`
+	NotAuthorized        string `json:"notAuthorized"`
 }
 
 // ChangeLanguage contains ChangeLanguage-related words
@@ -53,15 +54,17 @@ type SetLanguagePrefix struct {
 
 // HelpCommand contains HelpCommand-related words
 type HelpCommand struct {
-	Get         string `json:"get"`
-	Ping        string `json:"ping"`
-	Reload      string `json:"reload"`
-	Language    string `json:"language"`
-	Help        string `json:"help"`
-	AdminOnly   string `json:"adminOnly"`
-	SetPrefix   string `json:"setPrefix"`
-	Subscribe   string `json:"subscribe"`
-	Unsubscribe string `json:"unsubscribe"`
+	Get           string `json:"get"`
+	Ping          string `json:"ping"`
+	Reload        string `json:"reload"`
+	Language      string `json:"language"`
+	Help          string `json:"help"`
+	AdminOnly     string `json:"adminOnly"`
+	SetPrefix     string `json:"setPrefix"`
+	Subscribe     string `json:"subscribe"`
+	Unsubscribe   string `json:"unsubscribe"`
+	Access        string `json:"access"`
+	Subscriptions string `json:"subscriptions"`
 }
 
 // Subscribe contains Subscribe-related words

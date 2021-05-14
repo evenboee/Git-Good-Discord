@@ -39,7 +39,11 @@ func commandHandler(i Implementation, s *discordgo.Session, m *discordgo.Message
 	case "subscriptions":
 		message = getSubscriptions(language, i.DatabaseService, m)
 	case "reload":
-		message = reloadHandler(language, m)
+		if !memberIsAdmin(m, s) {
+			message = discord_messages.NotAuthorizedMessage(language, "ReloadLanguage", m)
+		} else {
+			message = reloadHandler(language, m)
+		}
 	case "language":
 		if !memberIsAdmin(m, s) {
 			message = discord_messages.NotAuthorizedMessage(language, "ChangeLanguage", m)

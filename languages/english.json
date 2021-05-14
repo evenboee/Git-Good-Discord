@@ -6,7 +6,8 @@
   },
   "reloadLang": {
     "errorReloading": "We had problems reloading the language packs",
-    "successfullyReloaded": "We successfully reloaded the language packs"
+    "successfullyReloaded": "We successfully reloaded the language packs",
+    "notAuthorized": "You are not authorized to reload language packs"
   },
   "changeLang": {
     "noParam": "Please enter a language",
@@ -28,7 +29,9 @@
     "adminOnly": "(Admin only)",
     "setPrefix": "Sets the prefix for used for commands",
     "subscribe": "Subscribe to project events of user",
-    "unsubscribe": "Unsubscribe from project events of user"
+    "unsubscribe": "Unsubscribe from project events of user",
+    "access": "Set the access token for a repo",
+    "subscriptions": "Get your subscriptions in the channel you are in"
   },
   "subscribe": {
     "databaseAddFail": "Failed to subscribe",
