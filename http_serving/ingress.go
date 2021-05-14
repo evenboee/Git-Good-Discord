@@ -10,7 +10,7 @@ const port = "8080"
 
 var fs = http.FileServer(http.Dir("./static"))
 
-func (i Implementation) Start(errorChannel chan <- error) {
+func (i Implementation) Start(errorChannel chan<- error) {
 	mux := http.NewServeMux()
 	mux.Handle("/", http.HandlerFunc(getRedirectionHandler(i)))
 
@@ -20,8 +20,8 @@ func (i Implementation) Start(errorChannel chan <- error) {
 }
 
 // getRedirectionHandler gets the redirection handler
-func getRedirectionHandler(i Implementation) func (http.ResponseWriter, *http.Request) {
-	return func (w http.ResponseWriter, req *http.Request) {
+func getRedirectionHandler(i Implementation) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, req *http.Request) {
 		switch {
 		case strings.Contains(strings.ToLower(req.RequestURI), "gitlab"):
 			http.HandlerFunc(getGitlabWebhookNotificationHandler(i)).ServeHTTP(w, req)
@@ -32,7 +32,7 @@ func getRedirectionHandler(i Implementation) func (http.ResponseWriter, *http.Re
 }
 
 // getGitlabWebhookNotificationHandler gets gitlab webhook notification handler
-func getGitlabWebhookNotificationHandler (i Implementation) func(http.ResponseWriter, *http.Request) {
+func getGitlabWebhookNotificationHandler(i Implementation) func(http.ResponseWriter, *http.Request) {
 	// Wrap handler with error handling and handle request
 	return func(w http.ResponseWriter, req *http.Request) {
 		err := i.GitlabService.HandleWebhookNotificationHTTP(w, req)

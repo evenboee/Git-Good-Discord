@@ -73,7 +73,7 @@ func GetSetAccessToken(command string, language string, newAccessToken string, e
 	}
 
 	return discord_structs.EmbeddedMessage{
-		Message:      discord_structs.Message{
+		Message: discord_structs.Message{
 			ChannelID: messageCreate.ChannelID,
 			Message:   response,
 			Mentions:  []string{messageCreate.Author.Mention()},
@@ -94,7 +94,7 @@ func GetSubscriptions(command string, language string, subscriptions string, m *
 	}
 
 	return discord_structs.EmbeddedMessage{
-		Message:      discord_structs.Message{
+		Message: discord_structs.Message{
 			ChannelID: m.ChannelID,
 			Message:   response,
 			Mentions:  []string{m.Author.Mention()},
@@ -166,7 +166,7 @@ func NotAuthorizedMessage(language string, command string, messageCreate *discor
 }
 
 // GetCommandNotRecognized gets the message for when a command is not recognized
-func GetCommandNotRecognized(language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage{
+func GetCommandNotRecognized(language string, m *discordgo.MessageCreate) discord_structs.EmbeddedMessage {
 	return discord_structs.EmbeddedMessage{
 		Message: discord_structs.Message{
 			ChannelID: m.ChannelID,
@@ -285,7 +285,7 @@ func GetUnsubscribe(language string, command string, variable string, m *discord
 func NotifySubscribers(language string, discordChannelID string, subscribers []database_structs.Subscriber, notification gitlab_structs.WebhookNotification) discord_structs.EmbeddedMessage {
 	mentions := make([]string, 1)
 	for _, subscriber := range subscribers {
-		discordUser := &discordgo.User{ID: subscriber.DiscordUserId}
+		discordUser := &discordgo.User{ID: subscriber.DiscordUserID}
 		mentions = append(mentions, discordMention(discordUser))
 	}
 

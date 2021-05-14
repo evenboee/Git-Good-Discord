@@ -19,7 +19,7 @@ func (conn FirestoreConnection) SetChannelLanguage(channel_id string, language s
 func (conn FirestoreConnection) GetChannelSettings(channel_id string) (database_structs.ChannelSettings, error) {
 	channelSettings := database_structs.ChannelSettings{}
 	if conn.open != true {
-		return channelSettings, connectionNotOpenError
+		return channelSettings, errConnectionNotOpen
 	}
 	doc, err := conn.client.Collection(Channels).Doc(channel_id).Get(conn.ctx)
 
@@ -42,7 +42,7 @@ func (conn FirestoreConnection) GetChannelSettings(channel_id string) (database_
 // setChannelField will set a firestore field with the given value
 func setChannelField(conn FirestoreConnection, channel_id string, fieldName string, fieldValue interface{}) error {
 	if conn.open != true {
-		return connectionNotOpenError
+		return errConnectionNotOpen
 	}
 	_, err := conn.client.Collection(Channels).Doc(channel_id).Set(conn.ctx, map[string]interface{}{
 		fieldName: fieldValue,

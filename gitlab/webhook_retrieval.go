@@ -9,19 +9,19 @@ import (
 	"net/url"
 )
 
-func (i Implementation) GetRegisteredWebhooks (project gitlab_structs.Project) ([]gitlab_structs.WebhookRegistration, error) {
-	projectUrl, err := url.Parse(utils.HTTPS(project.URL))
+func (i Implementation) GetRegisteredWebhooks(project gitlab_structs.Project) ([]gitlab_structs.WebhookRegistration, error) {
+	projectURL, err := url.Parse(utils.HTTPS(project.URL))
 
 	if err != nil {
 		return nil, fmt.Errorf("could not parse project url. %v", err)
 	}
 
 	// Set correct URL parts
-	projectUrl.Path = fmt.Sprintf("api/v4/projects/%d/hooks", project.ID)
-	projectUrl.RawQuery = ""
-	projectUrl.Fragment = ""
+	projectURL.Path = fmt.Sprintf("api/v4/projects/%d/hooks", project.ID)
+	projectURL.RawQuery = ""
+	projectURL.Fragment = ""
 
-	url := projectUrl.String()
+	url := projectURL.String()
 
 	client := &http.Client{}
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -48,7 +48,7 @@ func (i Implementation) GetRegisteredWebhooks (project gitlab_structs.Project) (
 	return registeredWebhooks, nil
 }
 
-func (i Implementation) DoesWebhookWithURLExist (project gitlab_structs.Project, invocationURL string) (bool, error) {
+func (i Implementation) DoesWebhookWithURLExist(project gitlab_structs.Project, invocationURL string) (bool, error) {
 	parsedInvocationURL, err := url.Parse(utils.HTTPS(invocationURL))
 
 	if err != nil {
@@ -62,7 +62,7 @@ func (i Implementation) DoesWebhookWithURLExist (project gitlab_structs.Project,
 	}
 
 	for _, webhook := range registeredWebhooks {
-		webhookURL, err := url.Parse(webhook.Url)
+		webhookURL, err := url.Parse(webhook.URL)
 
 		// Ignore error if URL is invalid
 		if err != nil {

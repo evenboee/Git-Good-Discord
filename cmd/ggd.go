@@ -25,7 +25,7 @@ func main() {
 	go services.GetDiscord().Start(errorChannel)
 
 	// Throwing a fatal error and printing it for debugging purposes.
-	err := <- errorChannel
+	err := <-errorChannel
 	log.Println("A fatal error occured, exiting application:")
 	log.Fatalln(err)
 }

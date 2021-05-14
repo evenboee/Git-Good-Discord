@@ -27,7 +27,7 @@ const Instance = "instances"
 const Repos = "repos"
 const Channels = "channels"
 
-var connectionNotOpenError = errors.New("firestore connection is not open")
+var errConnectionNotOpen = errors.New("firestore connection is not open")
 
 func (db FirestoreDatabase) ConnectToDatabase(errorChan chan error) {
 	ctx := context.Background()
@@ -58,10 +58,10 @@ func (db FirestoreDatabase) GetConnection() database_interfaces.DatabaseConnecti
 
 func (conn FirestoreConnection) AddSubscriber(channel_id string, gitlab_instance string, repo_id string, gitlab_username string, discord_user_id string, issues bool, merge_requests bool) error {
 	if conn.open != true {
-		return connectionNotOpenError
+		return errConnectionNotOpen
 	}
 	subscriber := database_structs.Subscriber{
-		DiscordUserId:  discord_user_id,
+		DiscordUserID:  discord_user_id,
 		ChannelID:      channel_id,
 		Instance:       gitlab_instance,
 		RepoID:         repo_id,
@@ -81,7 +81,7 @@ func (conn FirestoreConnection) AddSubscriber(channel_id string, gitlab_instance
 
 func (conn FirestoreConnection) GetSubscribers(channel_id string, gitlab_instance string, repo_id string, gitlab_username string) ([]database_structs.Subscriber, error) {
 	if conn.open != true {
-		return nil, connectionNotOpenError
+		return nil, errConnectionNotOpen
 	}
 	// Navigating to resource: channels/{channel_id}/instances/{gitlab_instance}/repos/{repo_id}/subscribers/{gitlab_username}/subscribers/{discord_user_id}/
 	iter := conn.client.Collection(Channels).Doc(channel_id).Collection(Instance).Doc(gitlab_instance).Collection(Repos).Doc(repo_id).Collection(Subscribers).Doc(gitlab_username).Collection(Subscribers).Documents(conn.ctx)
@@ -107,7 +107,7 @@ func (conn FirestoreConnection) GetSubscribers(channel_id string, gitlab_instanc
 			return nil, err
 		}
 
-		subscriber.DiscordUserId = doc.Ref.ID
+		subscriber.DiscordUserID = doc.Ref.ID
 		subscribers = append(subscribers, subscriber)
 	}
 
@@ -116,7 +116,7 @@ func (conn FirestoreConnection) GetSubscribers(channel_id string, gitlab_instanc
 
 func (conn FirestoreConnection) DeleteSubscriber(channel_id, gitlab_instance string, repo_id string, gitlab_username string, discord_user_id string) error {
 	if conn.open != true {
-		return connectionNotOpenError
+		return errConnectionNotOpen
 	}
 	// Navigating to resource: channels/{channel_id}/instances/{gitlab_instance}/repos/{repo_id}/subscribers/{gitlab_username}/subscribers/{discord_user_id}/
 	subscriber := conn.client.Collection(Channels).Doc(channel_id).Collection(Instance).Doc(gitlab_instance).Collection(Repos).Doc(repo_id).Collection(Subscribers).Doc(gitlab_username).Collection(Subscribers).Doc(discord_user_id)
@@ -128,22 +128,28 @@ func (conn FirestoreConnection) GetAllSubscriptions(channel_id string, discord_u
 	var subscriptions []database_structs.Subscriber
 
 	if conn.open != true {
-		return subscriptions, connectionNotOpenError
+		return subscriptions, errConnectionNotOpen
 	}
 
 	iter := conn.client.CollectionGroup(Subscribers).Where("id", "==", discord_user_id).Where("channel_id", "==", channel_id).Documents(conn.ctx)
 	for {
 		doc, err := iter.Next()
 		if err != nil {
-			if err == iterator.Done { break }
+			if err == iterator.Done {
+				break
+			}
 			return subscriptions, err
 		}
 
 		v, err := json.Marshal(doc.Data())
-		if err != nil { return subscriptions, err }
+		if err != nil {
+			return subscriptions, err
+		}
 		var subscriber database_structs.Subscriber
 		err = json.Unmarshal(v, &subscriber)
-		if err != nil { return subscriptions, err }
+		if err != nil {
+			return subscriptions, err
+		}
 
 		subscriptions = append(subscriptions, subscriber)
 	}
@@ -152,7 +158,7 @@ func (conn FirestoreConnection) GetAllSubscriptions(channel_id string, discord_u
 
 func (conn FirestoreConnection) Close() error {
 	if conn.open != true {
-		return connectionNotOpenError
+		return errConnectionNotOpen
 	}
 	return conn.client.Close()
 }

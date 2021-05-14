@@ -18,7 +18,6 @@ func (cb *ClosingBuffer) Close() (err error) {
 	return
 }
 
-
 func TestImplementation_HandleWebhookNotificationHTTP(t *testing.T) {
 	mockctrl := gomock.NewController(t)
 	defer mockctrl.Finish()
@@ -38,9 +37,9 @@ func TestImplementation_HandleWebhookNotificationHTTP(t *testing.T) {
 	req := http.Request{}
 	req.Body = &ClosingBuffer{bytes.NewBufferString(testJSON)}
 	req.URL = &url.URL{
-		Scheme:      "https",
-		Host:        "git.gvk.idi.ntnu.no",
-		Path:        "/gitlab/831517371185102848",
+		Scheme: "https",
+		Host:   "git.gvk.idi.ntnu.no",
+		Path:   "/gitlab/831517371185102848",
 	}
 
 	req.Header = http.Header{}

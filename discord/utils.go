@@ -7,7 +7,7 @@ import (
 )
 
 // memberIsAdmin checks if member is admin
-func memberIsAdmin(m *discordgo.MessageCreate, s *discordgo.Session,) bool {
+func memberIsAdmin(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 	roles, err := s.GuildRoles(m.GuildID)
 	if err != nil {
 		log.Printf("Bot.go: %v\n", err)
@@ -16,12 +16,18 @@ func memberIsAdmin(m *discordgo.MessageCreate, s *discordgo.Session,) bool {
 
 	adminID := ""
 	for _, role := range roles {
-		if role.Name == "Admin" { adminID = role.ID }
+		if role.Name == "Admin" {
+			adminID = role.ID
+		}
 	}
-	if adminID == "" { return false }
+	if adminID == "" {
+		return false
+	}
 
 	for _, role := range m.Member.Roles {
-		if role == adminID { return true }
+		if role == adminID {
+			return true
+		}
 	}
 	return false
 }

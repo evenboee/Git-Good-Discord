@@ -15,25 +15,25 @@ import (
 
 // Services
 var (
-	gitlabService gitlab_interfaces.Interface
-	discordService discord_interfaces.Interface
+	gitlabService      gitlab_interfaces.Interface
+	discordService     discord_interfaces.Interface
 	abstractionService abstraction_interfaces.Interface
-	databaseService database_interfaces.Database
-	webHandlerService http_serving_interfaces.WebHandler
+	databaseService    database_interfaces.Database
+	webHandlerService  http_serving_interfaces.WebHandler
 )
 
 // Implementations
 var (
-	gitlabImplementation gitlab.Implementation
-	discordImplementation discord.Implementation
+	gitlabImplementation      gitlab.Implementation
+	discordImplementation     discord.Implementation
 	abstractionImplementation abstraction.Implementation
-	databaseImplementation database.FirestoreDatabase
-	webHandlerImplementation http_serving.Implementation
+	databaseImplementation    database.FirestoreDatabase
+	webHandlerImplementation  http_serving.Implementation
 )
 
 // InjectAndInitializeServices will perform dependency injection for all the
 // services and initialize their dependencies so that they can be used
-func InjectAndInitializeServices () {
+func InjectAndInitializeServices() {
 	// Inject
 	gitlabService = &gitlabImplementation
 	discordService = &discordImplementation
@@ -72,11 +72,11 @@ func GetAbstraction() abstraction_interfaces.Interface {
 }
 
 // GetDatabase gets the Database service explicitly without being injected
-func GetDatabase () database_interfaces.Database{
+func GetDatabase() database_interfaces.Database {
 	return databaseService
 }
 
 // GetWebHandler gets the Web Handler service explicitly without being injected
-func GetWebHandler () http_serving_interfaces.WebHandler {
+func GetWebHandler() http_serving_interfaces.WebHandler {
 	return webHandlerService
 }

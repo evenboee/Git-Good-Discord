@@ -36,18 +36,18 @@ func TestImplementation_HandleGitlabNotification(t *testing.T) {
 	}
 
 	webhookNotification := gitlab_structs.WebhookNotification{
-		ObjectKind:       "issue",
-		Project:          gitlab_structs.Project{
-			URL:         "https://git.gvk.idi.ntnu.no/simen_bai/testing-git-good-discord-group-1",
-			ID:          1965,
+		ObjectKind: "issue",
+		Project: gitlab_structs.Project{
+			URL: "https://git.gvk.idi.ntnu.no/simen_bai/testing-git-good-discord-group-1",
+			ID:  1965,
 		},
-		User:             gitlab_structs.User{
+		User: gitlab_structs.User{
 			ID:       900,
 			Username: "roger",
 		},
 		ObjectAttributes: gitlab_structs.ObjectAttributes{
-			AssigneeID:   authorAndAssigneeUser.ID,
-			AuthorID:     authorAndAssigneeUser.ID,
+			AssigneeID: authorAndAssigneeUser.ID,
+			AuthorID:   authorAndAssigneeUser.ID,
 		},
 	}
 
@@ -60,6 +60,8 @@ func TestImplementation_HandleGitlabNotification(t *testing.T) {
 	// Will lookup AssigneeID and AuthorID
 	// But since they are the same, we are only expecting to invoke this ONCE
 	gitlabMock.EXPECT().GetUserByID(webhookNotification.Project.URL, 700).Times(1).Return(authorAndAssigneeUser, nil)
+
+	databaseConnectionMock.EXPECT().GetChannelSettings(discordChannelID).Times(1)
 
 	// Check that subscriptions are being fetched for each unique gitlab username
 	databaseConnectionMock.EXPECT().GetSubscribers(discordChannelID, gitlabInstance, strconv.Itoa(webhookNotification.Project.ID), webhookNotification.User.Username).Times(1)

@@ -8,12 +8,14 @@ import (
 )
 
 func (i Implementation) sendMessage(msg discord_structs.Message) error {
-	_, err := session.ChannelMessageSend(msg.ChannelID, buildMentions(msg.Mentions) + msg.Message)
+	_, err := session.ChannelMessageSend(msg.ChannelID, buildMentions(msg.Mentions)+msg.Message)
 	return err
 }
 
 func (i Implementation) SendMessage(msg discord_structs.EmbeddedMessage) error {
-	if session == nil { return errors.New("session is not open") }
+	if session == nil {
+		return errors.New("session is not open")
+	}
 	var err error
 	if reflect.DeepEqual(msg.MessageEmbed, discordgo.MessageEmbed{}) {
 		err = i.sendMessage(msg.Message)

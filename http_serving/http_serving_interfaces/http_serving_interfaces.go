@@ -5,6 +5,5 @@ type WebHandler interface {
 
 	// Start starts the web handler and sends error through errorChannel if an error
 	// occurs
-	Start(errorChannel chan <- error)
-
+	Start(errorChannel chan<- error)
 }

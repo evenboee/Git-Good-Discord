@@ -13,9 +13,8 @@ type Implementation struct {
 	AbstractionService abstraction_interfaces.Interface
 
 	// DatabaseService required by implementation
-	DatabaseService    database_interfaces.Database
+	DatabaseService database_interfaces.Database
 
 	// GitlabService required by implementation
-	GitlabService    gitlab_interfaces.Interface
-
+	GitlabService gitlab_interfaces.Interface
 }

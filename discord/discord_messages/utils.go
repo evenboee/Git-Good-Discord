@@ -23,7 +23,7 @@ func discordMention(mentioned interface{}) string {
 		role, ok := mentioned.(*discordgo.Role)
 		fmt.Println(role.Name)
 		if ok {
-			if strings.HasPrefix(role.Name, "@"){
+			if strings.HasPrefix(role.Name, "@") {
 				return role.Name + " "
 			}
 			return role.Mention()
@@ -32,10 +32,10 @@ func discordMention(mentioned interface{}) string {
 	return ""
 }
 
-func placeholderHandler(message string, args ...string) string{
+func placeholderHandler(message string, args ...string) string {
 	for i, arg := range args {
 		index := strconv.Itoa(i)
-		if strings.Contains(message, "{{"+ index +"}}") {
+		if strings.Contains(message, "{{"+index+"}}") {
 			message = strings.ReplaceAll(message, "{{"+index+"}}", arg)
 		}
 	}

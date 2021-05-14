@@ -36,7 +36,6 @@ func (i Implementation) HandleGitlabNotification(notification gitlab_structs.Web
 	// Get all interested subscribers for the given usernames
 	interestedSubscribers := getInterestedSubscribers(&uniqueUsernames, i, gitlabInstance, discordChannelID, strconv.Itoa(repoID))
 
-
 	conn := i.DatabaseService.GetConnection()
 	language := "english"
 
@@ -52,13 +51,13 @@ func (i Implementation) HandleGitlabNotification(notification gitlab_structs.Web
 	// Send message to notify subscribers
 	err = i.DiscordService.SendMessage(discord_messages.NotifySubscribers(language, discordChannelID, interestedSubscribers, notification))
 	if err != nil {
-		log.Printf("MergeRequestNotifcation - SendMessage - %v\n",err)
+		log.Printf("MergeRequestNotifcation - SendMessage - %v\n", err)
 	}
 }
 
 // getInterestedSubscribers will fetch interested subscribers (without
 // duplicates) for the given usernames
-func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementation, gitlabInstance, discordChannelID string, repoID string) []database_structs.Subscriber {
+func getInterestedSubscribers(uniqueUsernames *map[string]string, i Implementation, gitlabInstance, discordChannelID string, repoID string) []database_structs.Subscriber {
 	// Interested subscribers map in form of "Discord ID -> Subscriber"
 	interestedSubscribersMap := make(map[string]database_structs.Subscriber)
 
@@ -79,9 +78,9 @@ func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementat
 			// Check if subscriber is actually interested in merge requests
 			if sub.MergeRequests {
 				// Check if subscriber already has been registered as interested
-				if _, exists := interestedSubscribersMap[sub.DiscordUserId]; !exists {
+				if _, exists := interestedSubscribersMap[sub.DiscordUserID]; !exists {
 					// Add interested subscriber
-					interestedSubscribersMap[sub.DiscordUserId] = sub
+					interestedSubscribersMap[sub.DiscordUserID] = sub
 				}
 			}
 		}
@@ -99,7 +98,7 @@ func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementat
 
 // addUsernameIfAbsent will add username to the given map if it does not already
 // exist in the map
-func addUsernameIfAbsent (uniqueUsernames *map[string]string, username string) {
+func addUsernameIfAbsent(uniqueUsernames *map[string]string, username string) {
 	// Return if username exists in map
 	for _, mapUsername := range *uniqueUsernames {
 		if strings.EqualFold(username, mapUsername) {
@@ -107,12 +106,12 @@ func addUsernameIfAbsent (uniqueUsernames *map[string]string, username string) {
 		}
 	}
 
-	(*uniqueUsernames)["name:" + username] = username
+	(*uniqueUsernames)["name:"+username] = username
 }
 
 // addUsernamesIfAbsent will get the usernames for the given ids and add them to
 // the given map (without duplicates)
-func addUsernamesIfAbsent (uniqueUsernames *map[string]string, i Implementation, url string, ids ...int) {
+func addUsernamesIfAbsent(uniqueUsernames *map[string]string, i Implementation, url string, ids ...int) {
 	// Only retain unique ids
 	ids = utils.ConvertToUniqueIntSlice(ids)
 

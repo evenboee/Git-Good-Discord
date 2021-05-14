@@ -17,5 +17,4 @@ type Implementation struct {
 
 	// DatabaseService required by implementation
 	DatabaseService database_interfaces.Database
-
 }

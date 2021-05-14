@@ -65,8 +65,12 @@ func getSubscriptions(language string, db database_interfaces.Database, m *disco
 	if err == nil {
 		for _, subscription := range subscriptions {
 			var events []string
-			if subscription.MergeRequests { events = append(events, "merge_requests") }
-			if subscription.Issues { events = append(events, "issues") }
+			if subscription.MergeRequests {
+				events = append(events, "merge_requests")
+			}
+			if subscription.Issues {
+				events = append(events, "issues")
+			}
 			message += fmt.Sprintf("- %s/%s/%s %s\n", subscription.Instance, subscription.RepoID, subscription.GitlabUsername, strings.Join(events, ","))
 		}
 		command = "Successful"
@@ -93,7 +97,7 @@ func getSetAccessToken(language string, db database_interfaces.Database, s *disc
 
 	for i, v := range path {
 		if v == "" {
-			return discord_messages.GetSetAccessToken("PathElementEmpty", language, "", fmt.Sprintf("%d", i + 1), m)
+			return discord_messages.GetSetAccessToken("PathElementEmpty", language, "", fmt.Sprintf("%d", i+1), m)
 		}
 	}
 
@@ -262,7 +266,7 @@ func subscribeGetCommands(db database_interfaces.Database, gitlab gitlab_interfa
 		AccessToken: accessToken,
 	}
 	webhook := gitlab_structs.Webhook{
-		Url:                 url,
+		URL:                 url,
 		SecretToken:         token,
 		IssuesEvents:        true,
 		MergeRequestsEvents: true,
@@ -306,8 +310,7 @@ func getHandler(prefix string, messageCreate *discordgo.MessageCreate) discord_s
 	}
 
 	return discord_structs.EmbeddedMessage{
-		Message:
-		discord_structs.Message{
+		Message: discord_structs.Message{
 			ChannelID: messageCreate.ChannelID,
 			Message:   response,
 			Mentions:  nil,

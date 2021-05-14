@@ -13,7 +13,6 @@ type Database interface {
 
 	// GetConnection will get the current database connection for this database
 	GetConnection() DatabaseConnection
-
 }
 
 // DatabaseConnection contains functions for interacting with an open database

@@ -2,20 +2,20 @@ package discord_messages
 
 // commands contains the bot commands
 type commands struct {
-	Ping              			Ping              			`json:"ping"`
-	GetChannel        			GetChannel        			`json:"getChannel"`
-	ReloadLanguage    			ReloadLang        			`json:"reloadLang"`
-	ChangeLanguage    			ChangeLanguage    			`json:"changeLang"`
-	HelpCommand       			HelpCommand       			`json:"helpCommand"`
-	SetLanguagePrefix 			SetLanguagePrefix 			`json:"setPrefix"`
-	Language          			string            			`json:"language"`
-	NotificationMergeRequest 	NotificationMergeRequest 	`json:"notifyMR"`
-	NotificationIssue 			NotificationIssue 			`json:"notifyIssue"`
-	Subscribe         			Subscribe         			`json:"subscribe"`
-	Unsubscribe       			Unsubscribe       			`json:"unSubscribe"`
-	Errors						Errors						`json:"errors"`
-	SetAccessToken              SetAccessToken              `json:"setAccessToken"`
-	Subscriptions               Subscriptions               `json:"subscriptions"`
+	Ping                     Ping                     `json:"ping"`
+	GetChannel               GetChannel               `json:"getChannel"`
+	ReloadLanguage           ReloadLang               `json:"reloadLang"`
+	ChangeLanguage           ChangeLanguage           `json:"changeLang"`
+	HelpCommand              HelpCommand              `json:"helpCommand"`
+	SetLanguagePrefix        SetLanguagePrefix        `json:"setPrefix"`
+	Language                 string                   `json:"language"`
+	NotificationMergeRequest NotificationMergeRequest `json:"notifyMR"`
+	NotificationIssue        NotificationIssue        `json:"notifyIssue"`
+	Subscribe                Subscribe                `json:"subscribe"`
+	Unsubscribe              Unsubscribe              `json:"unSubscribe"`
+	Errors                   Errors                   `json:"errors"`
+	SetAccessToken           SetAccessToken           `json:"setAccessToken"`
+	Subscriptions            Subscriptions            `json:"subscriptions"`
 }
 
 // Ping contains Ping-related words

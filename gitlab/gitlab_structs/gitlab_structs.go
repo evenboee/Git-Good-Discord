@@ -9,8 +9,8 @@ const NotificationIssue = "issue"
 // Webhook is a Webhook that can be registered with Gitlab Projects
 type Webhook struct {
 
-	// Url is the invocation InstanceURL of the webhook
-	Url string `json:"url"`
+	// URL is the invocation InstanceURL of the webhook
+	URL string `json:"url"`
 
 	// Secret token to validate received payloads
 	// This value may not be set
@@ -37,7 +37,6 @@ type WebhookRegistration struct {
 
 	// Inherit Webhook struct
 	Webhook
-
 }
 
 // Project refers to a unique Gitlab Project
@@ -51,7 +50,6 @@ type Project struct {
 
 	//  AccessToken required for authentication
 	AccessToken string `json:"access_token"`
-
 }
 
 // ErrorResponse represents the error message Gitlab will send back as a http
@@ -60,35 +58,34 @@ type ErrorResponse struct {
 
 	// Message is the error message
 	Message string `json:"message"`
-
 }
 
 // User is a user as shown in webhook notification
 type User struct {
-	ID int `json:"id"`
-	Name string `json:"name"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
 	Username string `json:"username"`
-	Email string `json:"email"`
+	Email    string `json:"email"`
 }
 
 // ObjectAttributes are shared attributes for all webhooks. Some variables may not be
 // set depending on what type of webhook it belongs to
 type ObjectAttributes struct {
-	AssigneeID int `json:"assignee_id"`
-	AuthorID int `json:"author_id"`
-	CreatedAt string `json:"created_at"`
-	Description string `json:"description"`
-	MergeStatus string `json:"merge_status"`
+	AssigneeID   int    `json:"assignee_id"`
+	AuthorID     int    `json:"author_id"`
+	CreatedAt    string `json:"created_at"`
+	Description  string `json:"description"`
+	MergeStatus  string `json:"merge_status"`
 	SourceBranch string `json:"source_branch"`
 	TargetBranch string `json:"target_branch"`
-	Title string `json:"title"`
-	URL string `json:"url"`
+	Title        string `json:"title"`
+	URL          string `json:"url"`
 }
 
 // WebhookNotification contains data for a Gitlab webhook notification
 type WebhookNotification struct {
-	ObjectKind string `json:"object_kind"`
-	Project Project `json:"project"`
-	User User `json:"user"`
+	ObjectKind       string           `json:"object_kind"`
+	Project          Project          `json:"project"`
+	User             User             `json:"user"`
 	ObjectAttributes ObjectAttributes `json:"object_attributes"`
 }

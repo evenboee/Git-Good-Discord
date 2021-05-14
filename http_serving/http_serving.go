@@ -7,5 +7,4 @@ type Implementation struct {
 
 	// GitlabService required by Implementation
 	GitlabService gitlab_interfaces.Interface
-
 }

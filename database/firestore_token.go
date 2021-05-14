@@ -9,7 +9,7 @@ import (
 // addTokenToFirestore will add a given token type to firestore
 func addTokenToFirestore(conn FirestoreConnection, channel_id string, gitlab_instance string, repo_id string, token string, token_type string) error {
 	if conn.open != true {
-		return connectionNotOpenError
+		return errConnectionNotOpen
 	}
 
 	_, err := conn.client.Collection(Channels).Doc(channel_id).Collection(Instance).Doc(gitlab_instance).Collection(Repos).Doc(repo_id).Set(conn.ctx, map[string]interface{}{
@@ -22,7 +22,7 @@ func addTokenToFirestore(conn FirestoreConnection, channel_id string, gitlab_ins
 // getTokenFromFirestore fetches a token from firestore
 func getTokenFromFirestore(conn FirestoreConnection, channel_id string, gitlab_instance string, repo_id string, token_name string) (string, error) {
 	if conn.open != true {
-		return "", connectionNotOpenError
+		return "", errConnectionNotOpen
 	}
 
 	dsnap, err := conn.client.Collection(Channels).Doc(channel_id).Collection(Instance).Doc(gitlab_instance).Collection(Repos).Doc(repo_id).Get(conn.ctx)
@@ -33,9 +33,9 @@ func getTokenFromFirestore(conn FirestoreConnection, channel_id string, gitlab_i
 	data := dsnap.Data()
 	if v, ok := data[token_name]; ok {
 		return v.(string), nil
-	} else {
-		return "", nil
 	}
+
+	return "", nil
 }
 
 func (conn FirestoreConnection) AddSecurityToken(channel_id string, gitlab_instance string, repo_id string, token string) error {

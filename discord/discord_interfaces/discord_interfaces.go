@@ -10,5 +10,4 @@ type Interface interface {
 
 	// SendMessage sends a message on discord
 	SendMessage(message discord_structs.EmbeddedMessage) error
-
 }

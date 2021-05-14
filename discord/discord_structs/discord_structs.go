@@ -13,7 +13,6 @@ type Message struct {
 
 	// Mentions is the usernames that should be mentioned
 	Mentions []string
-
 }
 
 // EmbeddedMessage is a type of message that can have embedded content
@@ -24,5 +23,4 @@ type EmbeddedMessage struct {
 
 	// Embedded content
 	discordgo.MessageEmbed
-
 }

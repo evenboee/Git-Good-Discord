@@ -12,25 +12,25 @@ import (
 
 func (i Implementation) RegisterWebhook(project gitlab_structs.Project, webhook gitlab_structs.Webhook) (gitlab_structs.WebhookRegistration, error) {
 	//If webhook exists or there is an error
-	ok, err := i.DoesWebhookWithURLExist(project, webhook.Url)
+	ok, err := i.DoesWebhookWithURLExist(project, webhook.URL)
 	if err != nil {
 		return gitlab_structs.WebhookRegistration{}, err
 	} else if ok {
 		return gitlab_structs.WebhookRegistration{}, fmt.Errorf("webhook is already registered. %v", err)
 	}
 
-	projectUrl, err := url.Parse(utils.HTTPS(project.URL))
+	projectURL, err := url.Parse(utils.HTTPS(project.URL))
 
 	if err != nil {
 		return gitlab_structs.WebhookRegistration{}, fmt.Errorf("could not parse project url. %v", err)
 	}
 
 	// Set correct URL parts
-	projectUrl.Path = fmt.Sprintf("api/v4/projects/%d/hooks", project.ID)
-	projectUrl.RawQuery = ""
-	projectUrl.Fragment = ""
+	projectURL.Path = fmt.Sprintf("api/v4/projects/%d/hooks", project.ID)
+	projectURL.RawQuery = ""
+	projectURL.Fragment = ""
 
-	url := projectUrl.String()
+	url := projectURL.String()
 
 	webhookJSON, err := json.Marshal(webhook)
 

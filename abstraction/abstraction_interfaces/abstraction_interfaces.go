@@ -8,5 +8,4 @@ type Interface interface {
 	// HandleGitlabNotification handles a gitlab notification
 	// once it has been unmarshalled and verified
 	HandleGitlabNotification(notification gitlab_structs.WebhookNotification, discordChannelID string)
-
 }
