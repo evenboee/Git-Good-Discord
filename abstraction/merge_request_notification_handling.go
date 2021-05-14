@@ -44,9 +44,11 @@ func getInterestedSubscribers (uniqueUsernames *map[string]string, i Implementat
 	// Interested subscribers map in form of "Discord ID -> Subscriber"
 	interestedSubscribersMap := make(map[string]database_structs.Subscriber)
 
+	databaseConnection := i.DatabaseService.GetConnection()
+
 	// Find all subscribers that have subscribed (are interested) in any of the Gitlab usernames
 	for _, uniqueUsername := range *uniqueUsernames {
-		subscribers, err := i.DatabaseService.GetConnection().GetSubscribers(discordChannelID, gitlabInstance, repoID, uniqueUsername)
+		subscribers, err := databaseConnection.GetSubscribers(discordChannelID, gitlabInstance, repoID, uniqueUsername)
 
 		if err != nil {
 			// Log error, but continue
