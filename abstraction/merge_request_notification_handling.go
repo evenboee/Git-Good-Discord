@@ -34,7 +34,7 @@ func (i Implementation) HandleGitlabNotification(notification gitlab_structs.Web
 	addUsernameIfAbsent(&uniqueUsernames, notification.User.Username)
 
 	// Get all interested subscribers for the given usernames
-	interestedSubscribers := getInterestedSubscribers(&uniqueUsernames, i, gitlabInstance, discordChannelID, strconv.Itoa(repoID))
+	interestedSubscribers := getInterestedSubscribers(&uniqueUsernames, i, gitlabInstance, discordChannelID, strconv.Itoa(repoID), notification)
 
 	conn := i.DatabaseService.GetConnection()
 	language := "english"
@@ -57,7 +57,7 @@ func (i Implementation) HandleGitlabNotification(notification gitlab_structs.Web
 
 // getInterestedSubscribers will fetch interested subscribers (without
 // duplicates) for the given usernames
-func getInterestedSubscribers(uniqueUsernames *map[string]string, i Implementation, gitlabInstance, discordChannelID string, repoID string) []database_structs.Subscriber {
+func getInterestedSubscribers(uniqueUsernames *map[string]string, i Implementation, gitlabInstance, discordChannelID string, repoID string, notification gitlab_structs.WebhookNotification) []database_structs.Subscriber {
 	// Interested subscribers map in form of "Discord ID -> Subscriber"
 	interestedSubscribersMap := make(map[string]database_structs.Subscriber)
 
@@ -75,8 +75,8 @@ func getInterestedSubscribers(uniqueUsernames *map[string]string, i Implementati
 
 		// Check if any discord users are interested in notifications for the current gitlab username
 		for _, sub := range subscribers {
-			// Check if subscriber is actually interested in merge requests
-			if sub.MergeRequests {
+			// Check if subscriber is actually interested
+			if isInterested(sub, notification) {
 				// Check if subscriber already has been registered as interested
 				if _, exists := interestedSubscribersMap[sub.DiscordUserID]; !exists {
 					// Add interested subscriber
@@ -94,6 +94,18 @@ func getInterestedSubscribers(uniqueUsernames *map[string]string, i Implementati
 	}
 
 	return interestedSubscribers
+}
+
+// isInterested checks if subscriber is actually interested
+func isInterested (subscriber database_structs.Subscriber, notification gitlab_structs.WebhookNotification) bool {
+	switch notification.ObjectKind {
+	case gitlab_structs.NotificationMergeRequest:
+		return subscriber.MergeRequests
+	case gitlab_structs.NotificationIssue:
+		return subscriber.Issues
+	}
+
+	return false
 }
 
 // addUsernameIfAbsent will add username to the given map if it does not already
