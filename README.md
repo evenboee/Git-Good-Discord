@@ -33,12 +33,20 @@ There is a [landing page](http://10.212.136.172) with the same basic user inform
 For some commands to work the user executing them needs the **Admin** role (case sensitive).
 It is therefore strongly recommended for a channel to have an **Admin** role.
 
-The system is run on OpenStack and a VPN is required to reach the IP.
+The system is run on OpenStack and a VPN is required to reach the IP but not to use the bot.
 
 ### Setup
 
 - Authorize the bot for the server through [the discord website](https://discord.com/oauth2/authorize?client_id=830135256514297936&scope=bot)
 - Add **Admin role**
+
+### Generating access token
+
+Go to the projects settings/access_tokens.
+
+URL should be something like `https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/simen_bai/git-good-discord-group-1/-/settings/access_tokens`
+
+Needs api scope.
 
 ### Default settings
 
@@ -62,7 +70,7 @@ Assuming default command prefix (**!**)
     - e.g. `!subscribe git.gvk.idi.ntnu.no/1965/evenbbo1 issues,merge_requests`
 - `!unsubscribe <gitlab_instance>/<repo_id>/<gitlab_username>` to unsubscribe from all events
     - e.g. `!unsubscribe git.gvk.idi.ntnu.no/1965/evenbbo1`
-- `!subscriptions` to get subscriptions of channel 
+- `!subscriptions` to get your subscriptions in the current channel 
 
 #### Admin commands
 
@@ -79,7 +87,7 @@ Commands requiring user to have the role **Admin**
 
 ## Known bugs
 
-- Nothing that we know of
+- Nothing that we know of although that does not guarantee there are none
 
 
 ## Further improvements
